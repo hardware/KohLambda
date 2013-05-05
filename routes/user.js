@@ -1,6 +1,5 @@
 var pg = require('pg');
 var session = require('./session');
-var user = require('./user');
 
 /*
  *  Authentification de l'utilisateur via l'annuaire (méthode POST)
@@ -94,6 +93,23 @@ var register = function(req, res, client) {
 			req.session.user.name = name;
 			res.redirect('/casting/check');
 	});
+
+};
+
+/*
+ *  MAJ de la ville
+ */
+exports.update = function(req, res, callback) {
+
+  session.getXML(req, res, function(hordes) {
+    var cityInfos = {};
+    cityInfos.city = {
+      "name": hordes.data.city.$.city,
+      "day": hordes.headers.game.$.days,
+      "id": hordes.headers.game.$.id
+    };
+    callback(cityInfos);
+  });
 
 };
 

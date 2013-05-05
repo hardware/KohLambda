@@ -9,7 +9,7 @@ if path != '/'
           th CITY_INFO
         tr
           td
-            if game == undefined
+            if !game
               span {error : nodata}
                 br
                 | Prevenez un administrateur !
@@ -18,7 +18,7 @@ if path != '/'
                 each key, val in game
                   li { #{val} : #{key} }
           td
-            if user == undefined
+            if !user
               span {error : nodata}
                 br
                 | Prevenez un administrateur !
@@ -27,8 +27,8 @@ if path != '/'
                 each key, val in user
                   li { #{val} : #{key} }
           td
-            if city == undefined
-              span {error : nodata} #{city.name}
+            if !city
+              span {error : nodata}
                 br
                 | Prevenez un administrateur !
             else

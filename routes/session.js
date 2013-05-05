@@ -1,6 +1,7 @@
 var pg = require('pg');
 var http = require('http');
 var xml2js = require('xml2js');
+var user = require('./user');
 
 /*
  *  Récupération des infos du jeu (saison, jour, status des inscriptions)
@@ -8,8 +9,7 @@ var xml2js = require('xml2js');
  */
 exports.infos = function(req, res, shouldBeLogged, callback) {
 
-	console.log(req.session);
-
+	var block = 0;
 	var settings = {
 		"path":req.path,
 		"title":"KohLambda - ",
@@ -22,8 +22,19 @@ exports.infos = function(req, res, shouldBeLogged, callback) {
 		"user":{}
 	};
 
-	if(req.session.user) { settings.user =  req.session.user}
-	if(req.session.city) { settings.city =  req.session.city}
+	if(req.session.user) {
+		settings.user = req.session.user
+		if(!req.session.city) {
+			block = 1;
+			user.update(req, res, function(cityInfos) {
+				req.session.city = cityInfos.city;
+				settings.city = cityInfos.city;
+				callback(settings);
+			});
+		} else {
+			settings.city = req.session.city;
+		}
+	}
 
 	// On vérifie que l'utilisateur soit bien connecté
 	if(shouldBeLogged && !req.session.user) {
@@ -40,15 +51,17 @@ exports.infos = function(req, res, shouldBeLogged, callback) {
 		    	// On ajoute les infos du jeu à la session
 					req.session.game = result.rows[0];
 					settings.game = req.session.game;
-					callback(settings);
 					done();
+
+					if(block == 0) { callback(settings); }
 		  	});
 
 		  });
 
 		} else {
 			settings.game = req.session.game;
-			callback(settings);
+
+			if(block == 0) { callback(settings); }
 		}
 
 	}
