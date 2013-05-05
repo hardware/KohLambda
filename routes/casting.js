@@ -67,8 +67,9 @@ exports.register = function(req, res) {
 			return;
 		}
 
-		var leader = req.session.city && req.session.city.day == 1 && !req.session.city.registered;
-		var helper = req.session.city && req.session.city.day == 1 && req.session.city.registered;
+		// Pendant la beta : Jour > 0 / Hors beta : Jour == 1
+		var leader = req.session.city && req.session.city.day > 0 && !req.session.city.registered;
+		var helper = req.session.city && req.session.city.day > 0 && req.session.city.registered;
 
 		if(leader) {
 

@@ -16,7 +16,8 @@ block content
       - able = false
       li.ko Vous devez être en vie
 
-    if city.day == 1
+    //- Pendant la beta, cette condition est modifiée
+    if city.day > 0
       li.ok Vous êtes au premier jour
     else
       - able = false
