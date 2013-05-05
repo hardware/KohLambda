@@ -1,0 +1,38 @@
+doctype 5
+html
+  //- Switch sur le style, en fonction de l'heure.
+  if new Date().getHours() >= 19 || new Date().getHours() < 9
+    - var time = 'night'
+  else
+    - var time = 'day'
+  head
+    meta(charset='utf-8')
+    title=title
+    link(rel='stylesheet', href='/stylesheets/#{time}_style.css')
+    link(rel='shortcut icon', type='image/png', href='/images/favicon.png')
+  body
+    header
+      if game
+        div.season=game.season
+      #menu
+        if city.name != undefined
+          div.citysign=city.name
+        if user.name != undefined
+          div.username=user.name
+        else
+          div.username Vous n'êtes pas connecté
+        if game.day > 0
+          div.cityday
+            - var length = Math.ceil(game.day/5)
+            each x, i in new Array(length)
+              - var count = Math.min(5, game.day-i*5)
+              img(src='/images/#{time}_#{count}.png', height='20px')
+        if path == '/casting'
+          a.update(href='/casting/check')
+            if time == 'day'
+              img(src='/images/day_maj.png')
+            else
+              img(src='/images/night_maj.png')
+    div#container
+      block content
+    footer

@@ -1,0 +1,14 @@
+{
+  "name": "KohLambda",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.x",
+    "jade": "*",
+    "less-middleware": "*",
+    "pg": "1.1.x",
+    "xml2js": "0.2.x"
+  }
+}

@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1 Connexion
+  form(action='login', method='post')
+    .formline Identifiant externe:
+      input(name='key')
+    .formline
+      input(type='submit')

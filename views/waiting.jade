@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  .ordeal= "En attente de d'autres aventuriers"
+  p Vous voila maintenant dans la salle d'attente du studio, que le temps vous semble long...
+    | Mais ceci est nécessaire afin qu'un maximum de joueurs puissent participer à l'aventure.
+  p Voici la liste des joueurs participants à l'aventure :
+  ul.checklist
+    each key,val in adventurers
+      li.adventurer=val

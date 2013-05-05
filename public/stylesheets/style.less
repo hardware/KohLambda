@@ -1,0 +1,209 @@
+﻿@font-face {
+  font-family: text;
+  src: url("/fonts/German Beauty.ttf");
+}
+
+@font-face {
+  font-family: rtext;
+  src: url("/fonts/Dimbo Regular.ttf");
+}
+
+
+
+body {
+  background: @bg_color url(@bg) center repeat-y;
+  padding: 0px;
+  margin: 0px;
+  font-family: text;
+  color: @font_color;
+}
+
+header {
+  background: url(@bg_top) center no-repeat;
+  display: block;
+  height: 450px;
+  position: relative;
+  width: 1100px;
+  margin: auto;
+}
+
+header #menu {
+  width: 100%;
+  height: 66px;
+  position: absolute;
+  bottom: 79px;
+  padding-left: 78px;
+}
+
+header .citysign {
+  background: url(@city_sign) center no-repeat;
+  color: @city_sign_color;
+  position: relative;
+  bottom: 22px;
+  width: 264px;
+  height: 69px;
+  text-align: center;
+  line-height: 69px;
+  font-size: 16px;
+  float:left;
+}
+
+header .update {
+  position: absolute;
+  right: 200px;
+  bottom: 14px;
+}
+
+header .cityday {
+  color: @city_sign_color;
+  text-align: left;
+}
+
+header .username {
+  color: @color_dark;
+  text-align: left;
+  font-size: 18px;
+}
+
+header .season {
+  color: @season_color;
+  position: absolute;
+  bottom: 200px;
+  left: 50%;
+  font-size: 75px;
+  text-align: center;
+  width: 120px;
+  margin-left: -60px;
+}
+
+footer {
+  background: url(@bg_bot) center no-repeat;
+  height: 40px;
+  width: 100%;
+  position: relative;
+  left: 0px;
+  bottom: -40px;
+  display: none;
+}
+
+#container {
+  width: 900px;
+  padding: 30px;
+  margin: -113px auto 30px auto;
+  z-index: 9;
+  position: relative;
+}
+
+.ordeal {
+  width: 800px-20px-60px;
+  height: 187px-10px-40px;
+  text-align: center;
+  margin: auto;
+  background: url(@bg_ordeal);
+  color: @ordeal_color;
+  font-size: 35px;
+  font-variant: small-caps;
+  vertical-align: middle;
+  display: table-cell;
+  border-spacing: 0;
+  padding: 10px 20px 40px 60px;
+  position: relative;
+  left: 30px;
+}
+
+.formline {
+  display: block;
+  position: relative;
+  height: 50px;
+  font-size: 20px;
+  color: @color_light;
+  line-height: 40px;
+}
+
+.formline [type=submit], .formline [type=button] {
+  border: 1px solid @color_lightest;
+  border-bottom: none;
+  border-right: none;
+  cursor: pointer;
+  width: 200px;
+  background: @color_light;
+  color: @color_darkest;
+}
+
+.formline [type=submit]:active, .formline [type=button]:active {
+  border: 1px solid @color_darkest !important;
+  border-bottom: none !important;
+  border-right: none !important;
+  cursor: pointer;
+  width: 200px !important;
+  background: @color_light !important;
+  color: @color_darkest !important;
+}
+
+.formline > * {
+  position: absolute;
+  left: 250px;
+  width: 300px;
+  font-family: text;
+  font-size: 20px;
+  background: @color_darkest;
+  color: @color_light;
+  border: none;
+  margin: 0px;
+  padding: 10px 5px;
+  border-radius: 7px;
+}
+
+ul.checklist {
+  list-style-type: none;
+  margin: 20px;
+  padding: 0px;
+}
+
+ul.checklist li {
+  font-size: 30px;
+  border-radius: 7px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0px 0px 3px @color_light;
+}
+
+ul.checklist li.adventurer {
+  font-size: 20px;
+  margin:0 auto;
+  width:400px;
+  margin-bottom: 10px;
+  text-align:center;
+}
+
+ul.checklist li.ok {
+  background: @color_darkest url(@bg_ok) 600px center no-repeat;
+  color: @color_lightest;
+}
+
+ul.checklist li.ko {
+  background: @color_darkest url(@bg_ko) 200px center no-repeat;
+  color: @color_light;
+}
+
+p {
+  font-family: rtext, sans-serif;
+  font-size: 24px;
+  text-shadow: 0px 0px 6px @color_darkest;
+  color: @color_light;
+}
+
+.register, .noregister {
+  display: block;
+  width: 350px;
+  height: 150px;
+  line-height: 150px;
+  color: @color_darkest;
+  text-decoration: none;
+  font-size: 32px;
+  background: url(@bg_banner) center center no-repeat;
+}
+
+.noregister {
+  background-image: url(@bg_nobanner);
+}

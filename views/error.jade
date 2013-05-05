@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  if error == 'attack'
+    h1 NOM D'UNE COURGE ! Les zombies attaquent !
+    p Pour patienter, vous pouvez préparer une stratégie pour la journée suivante, ou vous reposer. C'est vous qui voyez.
+  else if error == 'notloggedin'
+    h1 Non connecté !
+    p Vous devez être connecté pour visualiser la page demandée.
+  else if error == 'usernotfound'
+    h1 La connexion a échouée
+    p Vous n'existez pas. Enfin, du moins, quelque chose a merdé lors de votre tentative de connexion.
+      br
+      | Mais vous allez sûrement <a href="/login">réessayer</a>, n'est-ce pas ?
+  else if error == 'cantregister'
+    h1 Ah bah bravo !
+    p Vous avez essayé de tricher en allant sur la page d'inscription sans avoir les pré-requis.
+      br
+      | Vous devriez avoir honte...
+    h1 Rappel
+    p Vous devez respecter un certain nombre de critères pour pouvoir vous inscrire :
+    ul
+      li Etre incarné dans une ville
+      li Etre encore au jour 1
+      li Etre le premier de votre ville à être inscrit
+  else if error == '404'
+    h1 Quoi ? Hein ? Comment ?
+    p Vous semblez perdu. Vous avez tapé une adresse au hasard pour essayer de tricher ? C'est pas bien.
+  else if error == 'notingame'
+    h1 Vous n'êtes pas en ville
+    p Vous devez être incarné pour pouvoir rejoindre l'aventure.
+  else if error == 'maintain'
+    h1 Maintenance !?
+    p Hordes.fr est actuellement en maintenance. KohLambda étant dépendant de l'API de Hordes.fr,
+      br
+      | le site n'est donc pas disponible pour le moment. Revenez une fois la maintenance terminée.

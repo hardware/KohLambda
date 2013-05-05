@@ -1,0 +1,45 @@
+extends layout
+
+block content
+  .ordeal= "Rien ne sert de courir, il faut partir à point."
+  p La première épreuve sur Koh-Lambda est l'inscription.
+    br
+    | Pour pouvoir rejoindre l'aventure, vous devez répondre à certains critères, listés ci-dessous.
+    br
+    | La mise à jour n'est pas automatique, vous devez appuyer sur le bouton de mise à jour manuellement.
+  ul.checklist
+    - var able = true
+
+    if city
+      li.ok Vous êtes actuellement incarné
+    else
+      - able = false
+      li.ko Vous devez être en vie
+
+    if city.day == 1
+      li.ok Vous êtes au premier jour
+    else
+      - able = false
+      li.ko Vous devez être au jour 1
+
+    if !city.registered
+      li.ok Votre ville n'a pas encore été enregistrée
+    else
+      if able
+        - var helper = true
+      - able = false
+      li.ko Votre ville a déjà été enregistrée par #{city.leader}
+  center
+    if !able
+      p Vous n'avez pas tous les pré-requis pour rejoindre l'aventure :(
+      .noregister
+    else
+      p Vous pouvez rejoindre l'aventure.
+        br
+        | En cliquant sur rejoindre, vous acceptez le sort que vous réservent vos coéquipiers.
+      a.register(href='/casting/register') Rejoindre
+    if helper
+      h1 Ne soyer pas déçu !
+      p Vous accédez malgré tout au status d'aideur.
+        br
+        | Vous aurez donc la possibilité de voir l'aventure du joueur présent dans votre ville.
