@@ -76,6 +76,8 @@ var register = function(req, res, client) {
       name = 'Thahatos'; break;
     case '37a99621c15274068f02aaf45aed1d2f':
       name = 'Scrib'; break;
+    case '42a8da7cb1ab7dfc88274c71e00c3b7d':
+      name = 'Chacalex'; break;
     default:
       name = '[anonyme]';
   }
