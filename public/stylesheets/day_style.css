@@ -184,3 +184,29 @@ p {
 .noregister {
   background-image: url("/images/day_nobanner.png");
 }
+#debug {
+  background-color: white;
+  width: 100%;
+  color: black;
+  font-family: arial, sans-serif;
+  border-top: 10px solid #b8925f;
+}
+table {
+  border-collapse: collapse;
+  width: 1000px;
+  margin: 0 auto;
+}
+th {
+  font-weight: bold;
+  border: 1px dashed #DDD;
+}
+td {
+  border: 1px solid #DDD;
+}
+td ul {
+  list-style-type: none;
+}
+th,
+td {
+  padding: 10px;
+}

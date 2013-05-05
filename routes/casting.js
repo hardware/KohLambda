@@ -126,7 +126,6 @@ exports.waiting = function(req, res) {
 		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 	    client.query('SELECT name FROM public.users WHERE type = $1', ['leader'], function(err, result) {
 			  settings.adventurers = result.rows;
-			  console.log(settings.adventurers);
 	    	done();
 	    	res.render('waiting', settings);
 	  	});

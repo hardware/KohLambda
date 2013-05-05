@@ -16,7 +16,7 @@ exports.login = function(req, res){
 
 	    	if(result.rowCount == 1) {
 	    		req.session.user = result.rows[0];
-	    		if(req.session.user.type == 'leader') {
+	    		if(req.session.user.type != null) {
 	    			res.redirect('/casting/waiting');
 	    		} else {
 	    			res.redirect('/casting/check');
@@ -80,6 +80,12 @@ var register = function(req, res, client) {
       name = 'Chacalex'; break;
     default:
       name = '[anonyme]';
+  }
+
+  if(name == '[anonyme]') {
+    req.session = null;
+    res.send('Vous n\'êtes pas invité à cette beta :(');
+    return;
   }
 
 	client.query('INSERT INTO users(name, key) VALUES ($1, $2) RETURNING id',

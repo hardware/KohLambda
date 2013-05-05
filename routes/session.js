@@ -8,6 +8,8 @@ var xml2js = require('xml2js');
  */
 exports.infos = function(req, res, shouldBeLogged, callback) {
 
+	console.log(req.session);
+
 	var settings = {
 		"path":req.path,
 		"title":"KohLambda - ",
@@ -20,9 +22,13 @@ exports.infos = function(req, res, shouldBeLogged, callback) {
 		"user":{}
 	};
 
+	if(req.session.user) { settings.user =  req.session.user}
+	if(req.session.city) { settings.city =  req.session.city}
+
 	// On vérifie que l'utilisateur soit bien connecté
 	if(shouldBeLogged && !req.session.user) {
 		res.redirect('/');
+		return;
 	} else {
 
 		// Si les informations du jeu ne sont pas dans la session
@@ -42,10 +48,6 @@ exports.infos = function(req, res, shouldBeLogged, callback) {
 
 		} else {
 			settings.game = req.session.game;
-
-			if(req.session.user) { settings.user = req.session.user; }
-			if(req.session.city) { settings.city = req.session.city; }
-
 			callback(settings);
 		}
 
@@ -88,7 +90,7 @@ exports.getXML = function(req, res, callback) {
 	          // Switch sur les possibles erreurs de hordes
 	          switch(result.hordes.error.$.code) {
 			        case 'user_not_found':
-			          delete req.session.user; // Suppression de la clé invalide
+			          req.session = null; // Suppression de la clé invalide
 	            	res.redirect('/error/usernotfound');
 			          break;
 			        case 'horde_attacking':

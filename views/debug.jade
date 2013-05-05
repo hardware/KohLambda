@@ -1,0 +1,37 @@
+if path != '/'
+  if path != '/login'
+    div#debug
+      center Les informations çi-dessous peuvent être utiles pour debugger l'application, si vous voyez quelque chose d'anormal, prévenez un développeur.
+      table
+        tr
+          th GAME_INFO
+          th USER_INFO
+          th CITY_INFO
+        tr
+          td
+            if game == undefined
+              span {error : nodata}
+                br
+                | Prevenez un administrateur !
+            else
+              ul
+                each key, val in game
+                  li { #{val} : #{key} }
+          td
+            if user == undefined
+              span {error : nodata}
+                br
+                | Prevenez un administrateur !
+            else
+              ul
+                each key, val in user
+                  li { #{val} : #{key} }
+          td
+            if city == undefined
+              span {error : nodata} #{city.name}
+                br
+                | Prevenez un administrateur !
+            else
+              ul
+                each key, val in city
+                  li { #{val} : #{key} }
