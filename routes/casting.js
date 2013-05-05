@@ -118,6 +118,11 @@ exports.register = function(req, res) {
 exports.waiting = function(req, res) {
 	session.infos(req, res, true, function(settings) {
 
+		if(req.session.user.type == null) {
+			res.redirect('/casting');
+			return;
+		}
+
 		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 	    client.query('SELECT name FROM public.users WHERE type = $1', ['leader'], function(err, result) {
 			  settings.adventurers = result.rows;
