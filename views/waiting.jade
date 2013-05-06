@@ -6,5 +6,5 @@ block content
     | Mais ceci est nécessaire afin qu'un maximum de joueurs puissent participer à l'aventure.
   p Voici la liste des joueurs participants à l'aventure :
   ul.checklist
-    each key,val in adventurers
-      li.adventurer=key
+    each user in users
+      li.adventurer=user.name
