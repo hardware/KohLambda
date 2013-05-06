@@ -127,6 +127,7 @@ exports.waiting = function(req, res) {
 	    client.query('SELECT name FROM public.users WHERE type = $1', ['leader'], function(err, result) {
 			  settings.adventurers = result.rows;
 	    	done();
+	    	settings.title += "Salle d'attente";
 	    	res.render('waiting', settings);
 	  	});
 	  });

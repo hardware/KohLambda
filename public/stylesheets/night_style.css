@@ -1,0 +1,212 @@
+@font-face {
+  font-family: text;
+  src: url("/fonts/German Beauty.ttf");
+}
+@font-face {
+  font-family: rtext;
+  src: url("/fonts/Dimbo Regular.ttf");
+}
+body {
+  background: #1b1c25 url("/images/night_bg.png") center repeat-y;
+  padding: 0px;
+  margin: 0px;
+  font-family: text;
+  color: #7a7a7a;
+}
+header {
+  background: url("/images/night_bg_top.png") center no-repeat;
+  display: block;
+  height: 450px;
+  position: relative;
+  width: 1100px;
+  margin: auto;
+}
+header #menu {
+  width: 100%;
+  height: 66px;
+  position: absolute;
+  bottom: 79px;
+  padding-left: 78px;
+}
+header .citysign {
+  background: url("/images/night_city_sign.png") center no-repeat;
+  color: #0b0b0f;
+  position: relative;
+  bottom: 22px;
+  width: 264px;
+  height: 69px;
+  text-align: center;
+  line-height: 69px;
+  font-size: 16px;
+  float: left;
+}
+header .update {
+  position: absolute;
+  right: 200px;
+  bottom: 14px;
+}
+header .cityday {
+  color: #0b0b0f;
+  text-align: left;
+}
+header .username {
+  color: #1b1c25;
+  text-align: left;
+  font-size: 18px;
+}
+header .season {
+  color: #0f0f20;
+  position: absolute;
+  bottom: 200px;
+  left: 50%;
+  font-size: 75px;
+  text-align: center;
+  width: 120px;
+  margin-left: -60px;
+}
+footer {
+  background: url("/images/night_bg_bottom.png") center no-repeat;
+  height: 40px;
+  width: 100%;
+  position: relative;
+  left: 0px;
+  bottom: -40px;
+  display: none;
+}
+#container {
+  width: 900px;
+  padding: 30px;
+  margin: -113px auto 30px auto;
+  z-index: 9;
+  position: relative;
+}
+.ordeal {
+  width: 720px;
+  height: 137px;
+  text-align: center;
+  margin: auto;
+  background: url("/images/night_paper.png");
+  color: #111124;
+  font-size: 35px;
+  font-variant: small-caps;
+  vertical-align: middle;
+  display: table-cell;
+  border-spacing: 0;
+  padding: 10px 20px 40px 60px;
+  position: relative;
+  left: 30px;
+}
+.formline {
+  display: block;
+  position: relative;
+  height: 50px;
+  font-size: 20px;
+  color: #3e4f41;
+  line-height: 40px;
+}
+.formline [type=submit],
+.formline [type=button] {
+  border: 1px solid #7a7a7a;
+  border-bottom: none;
+  border-right: none;
+  cursor: pointer;
+  width: 200px;
+  background: #3e4f41;
+  color: #0b0b0f;
+}
+.formline [type=submit]:active,
+.formline [type=button]:active {
+  border: 1px solid #0b0b0f !important;
+  border-bottom: none !important;
+  border-right: none !important;
+  cursor: pointer;
+  width: 200px !important;
+  background: #3e4f41 !important;
+  color: #0b0b0f !important;
+}
+.formline > * {
+  position: absolute;
+  left: 250px;
+  width: 300px;
+  font-family: text;
+  font-size: 20px;
+  background: #0b0b0f;
+  color: #3e4f41;
+  border: none;
+  margin: 0px;
+  padding: 10px 5px;
+  border-radius: 7px;
+}
+ul.checklist {
+  list-style-type: none;
+  margin: 20px;
+  padding: 0px;
+}
+ul.checklist li {
+  font-size: 30px;
+  border-radius: 7px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0px 0px 3px #3e4f41;
+}
+ul.checklist li.adventurer {
+  font-size: 20px;
+  margin: 0 auto;
+  width: 400px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+ul.checklist li.ok {
+  background: #0b0b0f url("/images/day_ok.png") 600px center no-repeat;
+  color: #7a7a7a;
+}
+ul.checklist li.ko {
+  background: #0b0b0f url("/images/day_ko.png") 200px center no-repeat;
+  color: #3e4f41;
+}
+p {
+  font-family: rtext, sans-serif;
+  font-size: 24px;
+  text-shadow: 0px 0px 6px #0b0b0f;
+  color: #3e4f41;
+}
+.register,
+.noregister {
+  display: block;
+  width: 350px;
+  height: 150px;
+  line-height: 150px;
+  color: #0b0b0f;
+  text-decoration: none;
+  font-size: 32px;
+  background: url("/images/night_banner.png") center center no-repeat;
+}
+.noregister {
+  background-image: url("/images/night_nobanner.png");
+}
+#debug {
+  background-color: white;
+  width: 100%;
+  color: black;
+  font-family: arial, sans-serif;
+  border-top: 10px solid #3e4f41;
+}
+table {
+  border-collapse: collapse;
+  width: 1000px;
+  margin: 0 auto;
+}
+th {
+  font-weight: bold;
+  border: 1px dashed #DDD;
+}
+td {
+  border: 1px solid #DDD;
+}
+td ul {
+  list-style-type: none;
+}
+th,
+td {
+  padding: 10px;
+}

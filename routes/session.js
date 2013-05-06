@@ -100,10 +100,11 @@ exports.getXML = function(req, res, callback) {
 		  	parser.parseString(buffer, function(err, result) {
 
 		  		if(!result || result.hordes.error) {
+		  			// Suppression de la session utilisateur
+		  			req.session.user = null;
 	          // Switch sur les possibles erreurs de hordes
 	          switch(result.hordes.error.$.code) {
 			        case 'user_not_found':
-			          req.session = null; // Suppression de la clé invalide
 	            	res.redirect('/error/usernotfound');
 			          break;
 			        case 'horde_attacking':
