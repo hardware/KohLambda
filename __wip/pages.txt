@@ -1,0 +1,40 @@
+﻿Pages:
+
+Camp rouge
+  + Accessible uniquement à l'équipe rouge
+  JN- Voir l'équipe
+  JN- Voir les statuts des gens
+  > Conforts (débloquables dans les épreuves de confort)
+    J- Tchat
+    JN- Bloc-notes personnel
+  
+Camp jaune
+  + Accessible uniquement à l'équipe jaune
+  JN- Voir l'équipe
+  JN- Voir les statuts des gens
+  > Conforts (débloquables dans les épreuves de confort)
+    J- Tchat
+    JN- Bloc-notes personnel
+
+Epreuves
+  + Accessible à tous
+  J- Voir l'épreuve en cours
+  N- Voir les résultats de l'épreuve
+  > Conforts (débloquables dans les épreuves de confort)
+    JN- Affichage des résultats individuels
+
+Conseil
+  + Accessible à tous
+  N- Voter contre une personne
+  J- Voir les résultats d'un conseil
+  > Conforts (débloquables dans les épreuves de confort)
+    N- Tchat
+    JN- Tri des utilisateurs
+
+Studios
+  + Accessible à tous
+  JN- Faire le casting (pendant inscriptions)
+  JN- Page d'attente (avant inscriptions)
+  
+  JN- Poser une question à Denis (FAQ)
+  JN- Poser une question aux producteurs (Support)
