@@ -1,18 +1,19 @@
 /**
- * Module dependencies.
+ * Dépendances
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  , session = require('./routes/session')
-  , user = require('./routes/user')
-  , casting = require('./routes/casting')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  
+  , routes  = require('./routes')
+  , session = require('./routes/session')
+  , user    = require('./routes/user')
+  , casting = require('./routes/casting');
 
 var app = express();
 
-// all environments
+// Paramètres de l'application
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -28,18 +29,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 process.env.DATABASE_URL = process.env.DATABASE_URL || "tcp://hardware:SagemD35c@localhost:5432/kohlambda";
 
-// development only
+// Paramètre de l'application dans l'environnement de développement
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+/*
+ *  ROUTES
+ */
+
 app.get('/', routes.loginredirect);
-app.get('/login', routes.loginredirect);
+app.get('/login', routes.loginredirect); // Connexion temporaire
 app.post('/login', user.login);
 app.get('/error/:error', routes.error);
 app.get('/help', routes.help);
 
-// CASTING
+/*
+ *  ROUTES : Le casting
+ */
 app.get('/casting', casting.index);
 app.get('/casting/check', casting.check);
 app.get('/casting/register', casting.register);

@@ -9,59 +9,82 @@ var user = require('./user');
  */
 exports.infos = function(req, res, shouldBeLogged, callback) {
 
-	var block = 0;
+	// Vérou non actif par défaut
+	var callbackLock = false;
+	
 	var settings = {
-		"path":req.path,
+		"path":req.path, // Chemin de la requête
 		"title":"KohLambda - ",
 		"game":{
 			"season":0,
 			"day":0,
 			"enrollment":null
 		},
+		// Objets vides (permet de ne pas avoir d'erreur lors de la génération du fichier layout.jade)
 		"city":{},
 		"user":{}
 	};
 
+  /*
+    Si l'utilisateur est connecté
+      -> On met à jour les paramètres utilisateur
+  */
 	if(req.session.user) {
 		settings.user = req.session.user
+		
+		/*
+    Si les informations de la ville ne sont pas présentes dans la session
+      -> On bloque les callbacks suivants (sinon les infos de la ville ne seront pas retournées)
+      -> On récupère les informations de la ville via la fonction user.update()
+      -> On met à jour les infos de la session et les paramètres
+    */
 		if(!req.session.city) {
-			block = 1;
+		
+		  // Activation du vérou
+			callbackLock = true;
+			
 			user.update(req, res, function(cityInfos) {
 				req.session.city = cityInfos.city;
 				settings.city = cityInfos.city;
 				callback(settings);
 			});
+	  /*
+    Si les informations de la ville sont présentes dans la session
+      -> On met à jour les paramètres avec les infos de la session
+    */
 		} else {
 			settings.city = req.session.city;
 		}
 	}
 
-	// On vérifie que l'utilisateur soit bien connecté
+	/*
+    Si l'utilisateur doit être connecté mais qu'il ne l'est pas
+      -> On le redirige vers la page de connexion
+  */
 	if(shouldBeLogged && !req.session.user) {
-		res.redirect('/');
+		res.redirect('/login');
 		return;
 	} else {
 
-		// Si les informations du jeu ne sont pas dans la session
+		// Si les infos du jeu ne sont pas dans la session
 		if(!req.session.game) {
 			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 
-				// Récupération des infos du jeu
+				// Récupération des infos du jeu dans la BDD
 		    client.query('SELECT * FROM public.game', function(err, result) {
 		    	// On ajoute les infos du jeu à la session
 					req.session.game = result.rows[0];
 					settings.game = req.session.game;
 					done();
 
-					if(block == 0) { callback(settings); }
+					if(!callbackLock) { callback(settings); }
 		  	});
 
 		  });
-
 		} else {
 			settings.game = req.session.game;
 
-			if(block == 0) { callback(settings); }
+			if(!callbackLock) { callback(settings); }
 		}
 
 	}
@@ -74,7 +97,7 @@ exports.infos = function(req, res, shouldBeLogged, callback) {
  */
 exports.getXML = function(req, res, callback) {
 
-	// On vérifie si l'utlisateur est connecté
+	// On vérifie si l'utilisateur est connecté
 	if(!req.session.user) {
 		res.redirect('/');
 	} else {
@@ -85,7 +108,7 @@ exports.getXML = function(req, res, callback) {
 		var options = {
 		  hostname: 'www.hordes.fr',
 		  port: 80,
-		  path: '/xml/?k='+key
+		  path: '/xml/?k='+key // TODO : ajouter la clé sécurisée (sk)
 		};
 
 		http.get(options, function(httpRes) {

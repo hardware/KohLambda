@@ -1,5 +1,11 @@
 var session = require('./session');
 
+/*
+ *  Page d'aide du jeu
+ *  Route : /help
+ *  Accès : L'utilisateur doit être connecté
+ *  Method : GET
+ */
 exports.help = function(req, res) {
 	session.infos(req, res, true, function(settings) {
 		settings.title += "Aide";
@@ -7,6 +13,12 @@ exports.help = function(req, res) {
   });
 };
 
+/*
+ *  Page d'erreur générale. Retourne une erreur en fonction du paramètre dans l'URL
+ *  Route : /error/:error
+ *  Accès : public
+ *  Method : GET
+ */
 exports.error = function(req, res) {
 	session.infos(req, res, false, function(settings) {
 		settings.title += "Erreur";
@@ -15,27 +27,15 @@ exports.error = function(req, res) {
 	});
 };
 
+/*
+ *  Page vers la page de connexion temporaire
+ *  Route : /login
+ *  Accès : public
+ *  Method : GET
+ */
 exports.loginredirect = function(req, res) {
 	session.infos(req, res, false, function(settings) {
 		settings.title += "Connexion temporaire";
 		res.render('login', settings);
 	});
 };
-
-/*
-exports.switchto = function(req, res) {
-  var client = new pg.Client(process.env.DATABASE_URL);
-  client.connect(function(err) {
-    var query;
-    var time = req.params.time;
-    if(time == 'day') // validate night;
-      query = client.query('UPDATE game SET time=\'day\', day=day+1 WHERE true');
-    else
-      query = client.query('UPDATE game SET time=\'night\' WHERE true');
-
-    query.on('end', function() {
-      res.redirect('/');
-    });
-  });
-};
-*/

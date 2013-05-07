@@ -2,30 +2,42 @@ var pg = require('pg');
 var session = require('./session');
 
 /*
- *  Authentification de l'utilisateur via l'annuaire (méthode POST)
+ *  Page de connexion de l'utilisateur via l'annuaire (méthode POST)
+ *  Route : /login
+ *  Accès : public
+ *  Method : POST
+ *  Paramètres : key (identifiant externe de l'utilisateur)
  */
 exports.login = function(req, res){
 	if(req.body.key) {
+	  
+	  // Ajout de la clé à la session de l'utilisateur
 		req.session.user = {"key":req.body.key};
 
-		// Vérification de l'existence de l'utilisateur
 		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-			// Récupération du profil du joueur
+			// Vérification de l'existance du profil de l'utilisateur
 	    client.query('SELECT * FROM public.users WHERE key = $1', [req.body.key], function(err, result) {
 
 	    	if(result.rowCount == 1) {
+	    	  // L'utilisateur existe, on ajoute ses informations à la session (id, name, key, type... etc)
 	    		req.session.user = result.rows[0];
+	    		done();
+	    		
+	    		// TODO : Revoir ces deux redirections
+	    		
+	    		// ##############################################
 	    		if(req.session.user.type != null) {
 	    			res.redirect('/casting/waiting');
 	    		} else {
 	    			res.redirect('/casting/check');
 	    		}
+	    		// ##############################################
+	    		
 	    	} else {
 	    		// L'utilisateur n'existe pas, on l'enregistre
 	    		register(req, res, client);
 	    	}
 
-				done();
 	  	});
 	  });
 
@@ -35,12 +47,12 @@ exports.login = function(req, res){
 };
 
 /*
- * Enregistrement de l'utilisateur
+ *  Fonction permettant d'enregistrer le joueur dans la BDD
  */
 var register = function(req, res, client) {
 
 	var name = '';
-	// var name = hordes.owner.citizen.$.name; // Avec l'accès sécurisé
+	// var name = hordes.owner.citizen.$.name; -> Avec l'accès sécurisé
 
 	switch(req.session.user.key) {
     case '5e03e132efe39d02b4004307f8d32d22':
@@ -82,22 +94,30 @@ var register = function(req, res, client) {
   }
 
   if(name == '[anonyme]') {
-    req.session = null;
-    res.send('Vous n\'êtes pas invité à cette beta :(');
+    req.session.user = null;
+    res.send('Vous n\'êtes pas invité à cette beta, contactez Liezon ou Hardware sur Twinoid');
     return;
   }
 
+  /*
+    Enregistrement de l'utilisateur dans la BDD
+    
+    Retourne le dernier identifiant généré par le champ id 
+    auto-incrémenté de type SERIAL (nextval)
+  */
 	client.query('INSERT INTO users(name, key) VALUES ($1, $2) RETURNING id',
 		[name, req.session.user.key], function(err, result) {
 			req.session.user.id = result.rows[0].id;
 			req.session.user.name = name;
+			
+			// On redirige l'utilisateur pour une première vérification des conditions
 			res.redirect('/casting/check');
 	});
 
 };
 
 /*
- *  MAJ de la ville
+ *  Fonction permettant d'obtenir les informations de la ville via le flux XML
  */
 exports.update = function(req, res, callback) {
 
@@ -112,62 +132,3 @@ exports.update = function(req, res, callback) {
   });
 
 };
-
-/*
- *  Fonction utilitaire pour créer des query et peupler une table (si l'enregistrement existe, il est mis à jour sinon il est inséré)
- */
-
-/*
-var populate = function(client, table, fields, where, callback) {
-  var query = 'UPDATE public."'+table+'" SET ';
-  var afields = new Array();
-  var avalues = new Array();
-  var index = 1;
-  for(field in fields) {
-    var value = fields[field];
-    if(index > 1) query += ', ';
-    query += field + ' = $' + index;
-    avalues.push(value);
-    afields.push(field);
-    index++;
-  }
-
-  var index2 = 1;
-  query += ' WHERE '
-  for(field in where) {
-    var value = where[field];
-    if(index2 > 1) query += ' AND ';
-    query += '"' + table + '".' + field + ' = $' + index;
-    avalues.push(value);
-    afields.push(field);
-    index++;
-    index2++;
-  }
-
-  client.query(query,
-    avalues, function(err, result) {
-    if(result.rowCount == 0) {
-      var query = 'INSERT INTO public."'+table+'" (';
-      var index = 1;
-      for(fx in afields) {
-        if(index > 1) query += ', ';
-        query += '"' + afields[fx] + '"';
-        index++;
-      }
-
-      var index2 = 1;
-      query += ') VALUES ('
-      for(value in avalues) {
-        if(index2 > 1) query += ', ';
-        query += '$' + index2;
-        index2++;
-      }
-      query +=')';
-
-      client.query(query, avalues);
-    }
-
-    callback();
-  });
-};
-*/
