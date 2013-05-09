@@ -1,32 +1,70 @@
-﻿var pg = require('pg');
+var pg = require('pg');
+var http = require('http');
+var xml2js = require('xml2js');
+var settingsModel = require('../models/settings');
 
 // Fonction pour récupérer les informations sur le jeu et sur l'utilisateur (et sa ville).
 exports.settings = function(req, res, options, callback) {
-  if(!!options.shouldBeLogged && !req.session.user) {
+
+  if(options.shouldBeLogged && !req.session.user) {
     res.redirect('/login');
     return;
   }
-  
+
   exports.gameSettings(req, res, options, function(gameSettings) {
-    options.game = gameSettings;
-    exports.userSettings(req, res, options, function(userSettings) {
-      callback(gameSettings + userSettings); // Concatenate objects.
+    exports.citySettings(req, res, options, function(citySettings) {
+      exports.userSettings(req, res, options, function(userSettings) {
+        callback(mergeObjects(gameSettings, citySettings, userSettings));
+      });
     });
   });
+
 }
 
 exports.gameSettings = function(req, res, options, callback) {
-  if(req.session.game) callback(req.session.game);
-  else db.gameSettings(callback);
+
+  var gameSettings = {"path":req.path, "title":"KohLambda - "};
+
+  if(req.session.game) {
+    gameSettings.game = req.session.game;
+    callback(gameSettings);
+  } else {
+    settingsModel.getGameSettings(function(gameParams) {
+      req.session.game = gameParams;
+      gameSettings.game = req.session.game;
+      callback(gameSettings);
+    });
+  }
+
+}
+
+exports.citySettings = function(req, res, options, callback) {
+
+  var citySettings = {"city":{}};
+
+  if(req.session.city) {
+    citySettings.city = req.session.city;
+  }
+
+  callback(citySettings);
+
 }
 
 exports.userSettings = function(req, res, options, callback) {
-  if(req.session.user) callback(req.session.user);
-  else db.userSettings(callback);
+
+  var userSettings = {"user":{}};
+
+  if(req.session.user) {
+    userSettings.user = req.session.user;
+  }
+
+  callback(userSettings);
+
 }
 
-exports.update = function(req, res) {
-  session.getXML(req, res, function(hordes) {
+exports.update = function(req, res, userkey, callback) {
+
+  exports.getXML(req, res, userkey, function(hordes) {
     if(hordes.error) {
       // Switch sur les possibles erreurs de hordes concernant la ville.
       switch(hordes.error.$.code) {
@@ -47,69 +85,72 @@ exports.update = function(req, res) {
         default:
           res.redirect('/error/'+result.hordes.error.$.code);
       }
-    } else {    
-      req.session.user = {
-        name:   hordes.data.city.$.city,
-        key:    hordes.headers.game.$.days
-      };
-      db.upsert('user', req.session.user, ['key']);
-      
+    } else {
+      // req.session.user.name = hordes.owner.citizen.$.name -> Avec l'accès sécurisé
+
       req.session.city = {
-        name:   hordes.data.city.$.city,
-        day:    hordes.headers.game.$.days,
-        id:     hordes.headers.game.$.id
+        "name": hordes.data.city.$.city,
+        "day": hordes.headers.game.$.days,
+        "id": hordes.headers.game.$.id
       };
-      db.upsert('city', req.session.city, ['id']);
-      
-      // Redirect to home.
-      res.redirect('/');
+
+      callback();
     }
   });
+
 }
 
-exports.getXML = function(req, res) {
-	// On vérifie si l'utilisateur est connecté
-	if(!req.session.user) {
-		res.redirect('/');
-	} else {
+exports.getXML = function(req, res, userKey, callback) {
 
-		var buffer = '';
-		var key = req.session.user.key;
-		var parser = new xml2js.Parser({explicitArray: false});
-		var options = {
-		  hostname: 'www.hordes.fr',
-		  port: 80,
-		  path: '/xml/?k='+key // TODO : ajouter la clé sécurisée (sk)
-		};
+	var buffer = '';
+	var parser = new xml2js.Parser({explicitArray: false});
+	var options = {
+	  hostname: 'www.hordes.fr',
+	  port: 80,
+	  path: '/xml/?k='+userKey // TODO : ajouter la clé sécurisée (sk)
+	};
 
-		http.get(options, function(httpRes) {
+	var httpReq = http.get(options, function(httpRes) {
 
-			// Réception des blocs de données puis concaténation des chunks dans un buffer
-			// Voir Chunked transfer encoding
-		  httpRes.on('data', function (chunk) {
-		    buffer += chunk;
-		  });
+		// Réception des blocs de données puis concaténation des chunks dans un buffer
+		// Voir Chunked transfer encoding
+	  httpRes.on('data', function (chunk) {
+	    buffer += chunk;
+	  });
 
-		  httpRes.on('end', function() {
-		  	parser.parseString(buffer, function(err, result) {
-		  		if(result) {
-            callback(result.hordes);
-	        } else {
-            // Suppression de la session utilisateur
-            req.session.user = null;
-            
-            if(result.hordes.error && result.hordes.error.$.code == 'user_not_found') {
-              res.redirect('/error/usernotfound');
-            } else {
-              res.redirect('/error/xmlunavailable');
-            }
-	        }
+	  httpRes.on('end', function() {
+	  	parser.parseString(buffer, function(err, result) {
+	  		if(result) {
+          callback(result.hordes);
+        } else {
+          res.redirect('/error/xmlunavailable');
+        }
+	  	});
+	  });
 
-		  	});
-		  });
+	});
 
-		});
+  // Si la requête est trop longue => timeout !
+  httpReq.on('socket', function(socket) {
+    socket.setTimeout(5000);
+    socket.on('timeout', function() {
+      httpReq.abort();
+      res.redirect('/error/xmltimeout');
+    });
+  });
 
-	}
+  // Si une erreur survient
+  httpReq.on('error', function(err) {
+    httpReq.abort();
+    res.redirect('/error/xmlunavailable');
+  });
 
+}
+
+var mergeObjects = function(obj1, obj2, obj3){
+  var obj = {};
+  for (var attr in obj1) { obj[attr] = obj1[attr]; }
+  for (var attr in obj2) { obj[attr] = obj2[attr]; }
+  for (var attr in obj3) { obj[attr] = obj3[attr]; }
+  return obj;
 }

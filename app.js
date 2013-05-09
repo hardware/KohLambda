@@ -5,9 +5,8 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  
+
   , routes  = require('./routes')
-  , session = require('./routes/session')
   , user    = require('./routes/user')
   , casting = require('./routes/casting');
 
@@ -19,6 +18,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.compress());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('f6GLCNSWbqI73yjppWBJ5r7AmMLARPwkcbHw6PY3'));

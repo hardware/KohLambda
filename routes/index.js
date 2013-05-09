@@ -1,4 +1,4 @@
-var session = require('./session');
+var data = require('./data');
 
 /*
  *  Page d'aide du jeu
@@ -7,11 +7,11 @@ var session = require('./session');
  *  Method : GET
  */
 exports.help = function(req, res) {
-	session.infos(req, res, true, function(settings) {
+	data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
 		settings.title += "Aide";
 		res.render('help', settings);
-  });
-};
+	});
+}
 
 /*
  *  Page d'erreur générale. Retourne une erreur en fonction du paramètre dans l'URL
@@ -20,12 +20,12 @@ exports.help = function(req, res) {
  *  Method : GET
  */
 exports.error = function(req, res) {
-	session.infos(req, res, false, function(settings) {
+	data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
 		settings.title += "Erreur";
 		settings.error = req.params.error;
 		res.render('error', settings);
 	});
-};
+}
 
 /*
  *  Page vers la page de connexion temporaire
@@ -34,8 +34,8 @@ exports.error = function(req, res) {
  *  Method : GET
  */
 exports.loginredirect = function(req, res) {
-	session.infos(req, res, false, function(settings) {
+	data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
 		settings.title += "Connexion temporaire";
 		res.render('login', settings);
 	});
-};
+}

@@ -1,5 +1,6 @@
 var pg = require('pg');
-var session = require('./session');
+var data = require('./data');
+var userModel = require('../models/user');
 
 /*
  *  Page de connexion de l'utilisateur via l'annuaire (méthode POST)
@@ -9,50 +10,43 @@ var session = require('./session');
  *  Paramètres : key (identifiant externe de l'utilisateur)
  */
 exports.login = function(req, res){
-	if(req.body.key) {
-	  
-	  // Ajout de la clé à la session de l'utilisateur
-		req.session.user = {"key":req.body.key};
 
-		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-			// Vérification de l'existance du profil de l'utilisateur
-	    client.query('SELECT * FROM public.users WHERE key = $1', [req.body.key], function(err, result) {
+  if(!req.body.key) {
+    res.redirect('/login');
+    return;
+  }
 
-	    	if(result.rowCount == 1) {
-	    	  // L'utilisateur existe, on ajoute ses informations à la session (id, name, key, type... etc)
-	    		req.session.user = result.rows[0];
-	    		done();
-	    		
-	    		// TODO : Revoir ces deux redirections
-	    		
-	    		// ##############################################
-	    		if(req.session.user.type != null) {
-	    			res.redirect('/casting/waiting');
-	    		} else {
-	    			res.redirect('/casting/check');
-	    		}
-	    		// ##############################################
-	    		
-	    	} else {
-	    		// L'utilisateur n'existe pas, on l'enregistre
-	    		register(req, res, client);
-	    	}
+  // Ajout de la clé à la session de l'utilisateur
+	req.session.user = {"key":req.body.key};
 
-	  	});
-	  });
+  userModel.findUserByKey(req.session.user.key, function(result) {
 
-	} else {
-		res.redirect('/login');
-	}
-};
+    if(result) {
+      // L'utilisateur existe, on ajoute ses informations à la session (id, name, key, type... etc)
+      req.session.user = result.rows[0];
+
+      data.update(req, res, req.session.user.key, function() {
+        if(req.session.user.type != null)
+          res.redirect('/casting/waiting');
+        else
+          res.redirect('/casting/check');
+      });
+    } else {
+      data.update(req, res, req.session.user.key, function() {
+        // L'utilisateur n'existe pas, on l'enregistre
+        register(req, res);
+      });
+    }
+
+  });
+}
 
 /*
  *  Fonction permettant d'enregistrer le joueur dans la BDD
  */
-var register = function(req, res, client) {
+var register = function(req, res) {
 
 	var name = '';
-	// var name = hordes.owner.citizen.$.name; -> Avec l'accès sécurisé
 
 	switch(req.session.user.key) {
     case '5e03e132efe39d02b4004307f8d32d22':
@@ -99,36 +93,16 @@ var register = function(req, res, client) {
     return;
   }
 
-  /*
-    Enregistrement de l'utilisateur dans la BDD
-    
-    Retourne le dernier identifiant généré par le champ id 
-    auto-incrémenté de type SERIAL (nextval)
-  */
-	client.query('INSERT INTO users(name, key) VALUES ($1, $2) RETURNING id',
-		[name, req.session.user.key], function(err, result) {
-			req.session.user.id = result.rows[0].id;
-			req.session.user.name = name;
-			
-			// On redirige l'utilisateur pour une première vérification des conditions
-			res.redirect('/casting/check');
-	});
+  var data = {"userName":name, "userKey":req.session.user.key};
 
-};
+  userModel.addUser(data, function(result) {
+    // Création de la session du nouvel utilisateur
+    req.session.user.id = result.rows[0].id;
+    req.session.user.name = name;
+    req.session.user.type = null;
 
-/*
- *  Fonction permettant d'obtenir les informations de la ville via le flux XML
- */
-exports.update = function(req, res, callback) {
-
-  session.getXML(req, res, function(hordes) {
-    var cityInfos = {};
-    cityInfos.city = {
-      "name": hordes.data.city.$.city,
-      "day": hordes.headers.game.$.days,
-      "id": hordes.headers.game.$.id
-    };
-    callback(cityInfos);
+    // On redirige l'utilisateur pour une première vérification des conditions
+    res.redirect('/casting/check');
   });
 
-};
+}
