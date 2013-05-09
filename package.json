@@ -10,5 +10,9 @@
     "less-middleware": "*",
     "pg": "1.1.x",
     "xml2js": "0.2.x"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
   }
 }
