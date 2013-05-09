@@ -2,6 +2,7 @@ var pg = require('pg');
 var data = require('./data');
 var cityModel = require('../models/city');
 var userModel = require('../models/user');
+var tribesModel = require('../models/tribes');
 
 /*
  *  Page de casting
@@ -131,20 +132,58 @@ exports.waiting = function(req, res) {
       settings.leaders = result.rows;
       userModel.findUsersByType('helper', function(result) {
         settings.helpers = result.rows;
+
+        splitUsers(req, res, settings.leaders, function(sortedUsers) {
+          for(var i in sortedUsers) {
+            tribesModel.addUserInTribe(sortedUsers[i]);
+          }
+        });
+
         settings.title += "Salle d'attente";
         res.render('waiting', settings);
       });
     });
-
   });
+
+}
+
+/*
+splitUsers(req, res, settings.leaders, function(sortedUsers) {
+  for(var i in sortedUsers) {
+    tribesModel.addUserInTribe(sortedUsers[i]);
+  }
+});
+*/
+
+var splitUsers = function(req, res, users, callback)
+{
+  var sortedUsers = {};
+  var nbUsers = users.length;
+  var usersPerTeam = Math.round((nbUsers)/2);
+
+  var j = usersPerTeam;
+
+  for (var i = 0; i < usersPerTeam; i++) {
+    sortedUsers[i] = {"tribe":"red", "season":req.session.game.season, "userId":users[i].id}
+
+    for (j; j < nbUsers; j++) {
+      sortedUsers[j] = {"tribe":"yellow", "season":req.session.game.season, "userId":users[j].id}
+    };
+  };
+
+  callback(sortedUsers);
 
 }
 
 var checkSession = function(req, res, callback) {
 
-  if(req.session.user.type != null) {
-    res.redirect('/casting/waiting');
-    return;
+  if(req.session.game.enrollment == false) {
+    if(req.session.user.type != null) {
+      res.redirect('/readytoplay');
+    } else {
+      res.redirect('/error/closedenrollment');
+      return;
+    }
   } else if(!req.session.city) {
     res.redirect('/error/nocityinfo');
     return;

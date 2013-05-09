@@ -14,7 +14,12 @@ exports.settings = function(req, res, options, callback) {
   exports.gameSettings(req, res, options, function(gameSettings) {
     exports.citySettings(req, res, options, function(citySettings) {
       exports.userSettings(req, res, options, function(userSettings) {
-        callback(mergeObjects(gameSettings, citySettings, userSettings));
+        var merged = mergeObjects(gameSettings, citySettings, userSettings);
+        console.log("########## SESSION ##########");
+        console.log(req.session);
+        console.log("########## SETTINGS ##########");
+        console.log(merged);
+        callback(merged);
       });
     });
   });

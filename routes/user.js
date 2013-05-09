@@ -26,10 +26,15 @@ exports.login = function(req, res){
       req.session.user = result.rows[0];
 
       data.update(req, res, req.session.user.key, function() {
-        if(req.session.user.type != null)
-          res.redirect('/casting/waiting');
-        else
-          res.redirect('/casting/check');
+
+        if(req.session.game.enrollment == true) {
+          if(req.session.user.type != null) res.redirect('/casting/waiting');
+          else res.redirect('/casting/check');
+        } else {
+          if(req.session.user.inTribe == true || req.session.user.type == 'helper') res.redirect('/readytoplay');
+          else res.redirect('/error/closedenrollment');
+        }
+
       });
     } else {
       data.update(req, res, req.session.user.key, function() {
@@ -93,9 +98,9 @@ var register = function(req, res) {
     return;
   }
 
-  var data = {"userName":name, "userKey":req.session.user.key};
+  var userData = {"userName":name, "userKey":req.session.user.key};
 
-  userModel.addUser(data, function(result) {
+  userModel.addUser(userData, function(result) {
     // Création de la session du nouvel utilisateur
     req.session.user.id = result.rows[0].id;
     req.session.user.name = name;
