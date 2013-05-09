@@ -7,10 +7,10 @@ var data = require('./data');
  *  Method : GET
  */
 exports.help = function(req, res) {
-	data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
-		settings.title += "Aide";
-		res.render('help', settings);
-	});
+  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
+    settings.title += "Aide";
+    res.render('help', settings);
+  });
 }
 
 /*
@@ -20,11 +20,11 @@ exports.help = function(req, res) {
  *  Method : GET
  */
 exports.error = function(req, res) {
-	data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
-		settings.title += "Erreur";
-		settings.error = req.params.error;
-		res.render('error', settings);
-	});
+  data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
+    settings.title += "Erreur";
+    settings.error = req.params.error;
+    res.render('error', settings);
+  });
 }
 
 /*
@@ -34,8 +34,8 @@ exports.error = function(req, res) {
  *  Method : GET
  */
 exports.loginredirect = function(req, res) {
-	data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
-		settings.title += "Connexion temporaire";
-		res.render('login', settings);
-	});
+  data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
+    settings.title += "Connexion temporaire";
+    res.render('login', settings);
+  });
 }

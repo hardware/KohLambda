@@ -17,7 +17,7 @@ exports.login = function(req, res){
   }
 
   // Ajout de la clé à la session de l'utilisateur
-	req.session.user = {"key":req.body.key};
+  req.session.user = {"key":req.body.key};
 
   userModel.findUserByKey(req.session.user.key, function(result) {
 
@@ -46,9 +46,9 @@ exports.login = function(req, res){
  */
 var register = function(req, res) {
 
-	var name = '';
+  var name = '';
 
-	switch(req.session.user.key) {
+  switch(req.session.user.key) {
     case '5e03e132efe39d02b4004307f8d32d22':
       name = 'Liezon'; break;
     case '4febc3b627fa9e99c265241c55321969':

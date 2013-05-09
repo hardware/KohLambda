@@ -102,33 +102,33 @@ exports.update = function(req, res, userkey, callback) {
 
 exports.getXML = function(req, res, userKey, callback) {
 
-	var buffer = '';
-	var parser = new xml2js.Parser({explicitArray: false});
-	var options = {
-	  hostname: 'www.hordes.fr',
-	  port: 80,
-	  path: '/xml/?k='+userKey // TODO : ajouter la clé sécurisée (sk)
-	};
+  var buffer = '';
+  var parser = new xml2js.Parser({explicitArray: false});
+  var options = {
+    hostname: 'www.hordes.fr',
+    port: 80,
+    path: '/xml/?k='+userKey // TODO : ajouter la clé sécurisée (sk)
+  };
 
-	var httpReq = http.get(options, function(httpRes) {
+  var httpReq = http.get(options, function(httpRes) {
 
-		// Réception des blocs de données puis concaténation des chunks dans un buffer
-		// Voir Chunked transfer encoding
-	  httpRes.on('data', function (chunk) {
-	    buffer += chunk;
-	  });
+    // Réception des blocs de données puis concaténation des chunks dans un buffer
+    // Voir Chunked transfer encoding
+    httpRes.on('data', function (chunk) {
+      buffer += chunk;
+    });
 
-	  httpRes.on('end', function() {
-	  	parser.parseString(buffer, function(err, result) {
-	  		if(result) {
+    httpRes.on('end', function() {
+      parser.parseString(buffer, function(err, result) {
+        if(result) {
           callback(result.hordes);
         } else {
           res.redirect('/error/xmlunavailable');
         }
-	  	});
-	  });
+      });
+    });
 
-	});
+  });
 
   // Si la requête est trop longue => timeout !
   httpReq.on('socket', function(socket) {
