@@ -191,6 +191,17 @@ p {
   font-family: arial, sans-serif;
   border-top: 10px solid #b8925f;
 }
+#admintools {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #b8925f;
+}
+#admintools ul {
+  list-style-type: none;
+  padding-left: 10px;
+  margin-top: 0px;
+}
 table {
   border-collapse: collapse;
   width: 1000px;

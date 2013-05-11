@@ -2,6 +2,7 @@ var pg = require('pg');
 var http = require('http');
 var xml2js = require('xml2js');
 var settingsModel = require('../models/settings');
+var userModel = require('../models/user');
 
 // Fonction pour récupérer les informations sur le jeu et sur l'utilisateur (et sa ville).
 exports.settings = function(req, res, options, callback) {
@@ -12,8 +13,8 @@ exports.settings = function(req, res, options, callback) {
   }
 
   exports.gameSettings(req, res, options, function(gameSettings) {
-    exports.citySettings(req, res, options, function(citySettings) {
-      exports.userSettings(req, res, options, function(userSettings) {
+    exports.userSettings(req, res, options, function(userSettings) {
+      exports.citySettings(req, res, options, function(citySettings) {
         callback(mergeObjects(gameSettings, citySettings, userSettings));
       });
     });
@@ -53,12 +54,19 @@ exports.citySettings = function(req, res, options, callback) {
 exports.userSettings = function(req, res, options, callback) {
 
   var userSettings = {"user":{}};
-
+  
   if(req.session.user) {
     userSettings.user = req.session.user;
+    callback(userSettings);
+  } else if(req.session.user && req.session.user.key) {
+    userModel.findUserByKey(req.session.user.key, function(userParams) {
+      req.session.user = usereParams;
+      userSettings.user = req.session.user;
+      callback(userSettings);
+    });
+  } else {
+      callback(userSettings);
   }
-
-  callback(userSettings);
 
 }
 

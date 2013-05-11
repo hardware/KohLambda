@@ -5,9 +5,10 @@ exports.findUserByKey = function(userKey, callback) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM public.users WHERE key = $1', [userKey], function(err, result) {
       done();
-      if(result.rowCount == 1)
+      if(result.rowCount == 1) {
         callback(result);
-      else
+        console.dir(result);
+      } else
         callback(null);
     });
   });

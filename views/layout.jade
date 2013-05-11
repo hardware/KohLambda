@@ -33,6 +33,27 @@ html
               img(src='/images/day_maj.png')
             else
               img(src='/images/night_maj.png')
+              
     div#container
       block content
+      
+    if user.admin
+      div#admintools 
+        | Outils d'administration
+        ul
+          form(action='/cron', method='POST')
+            li
+              input(type='Submit', value="Simuler un appel du cron")
+          form(action='/challenge/immunity/validate', method='POST')
+            li
+              input(type='Submit', value="Valider l'épreuve d'immunité")
+          form(action='/challenge/reward/validate', method='POST')
+            li
+              input(type='Submit', value="Valider l'épreuve de confort")
+          form(action='/council/validate', method='POST')
+            li
+              input(type='Submit', value="Valider les votes du conseil")
+          form(action='/studio/bailiff', method='POST')
+            li
+              input(type='Submit', value="Vérifier les statuts sur Hordes")
     footer
