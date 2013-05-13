@@ -1,15 +1,28 @@
 var data = require('./data');
 
-/*
- *  Page d'aide du jeu
- *  Route : /help
- *  Accès : L'utilisateur doit être connecté
- *  Method : GET
- */
-exports.help = function(req, res) {
-  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
-    settings.title += "Aide";
-    res.render('help', settings);
+exports.index = function(req, res) {
+  //TODO: Afficher la page d'accueil
+  data.settings(req, res, {shouldBeLogged:false}, function(settings) {
+    if(settings.game.day > 1) {                       // Jeu commencé
+      if(settings.user.tribe != null) {
+        res.redirect('/tribe/'+settings.user.tribe);  // Joueur > Redirection vers la tribu
+      } else {
+        res.redirect('/challenge/immunity');          // Visiteur > Redirection vers l'épreuve d'immunité
+      }
+    } else if(settings.game.day >= 0) {               // Inscriptions
+      res.redirect('/studio/casting/');
+    } else {
+      if(settings.game.day > -10)                // Différents titres suivant 
+        settings.title += "Tenez vous prêts !";
+      else if(settings.game.day > -30)
+        settings.title += "Bientôt...";
+      else if(settings.game.day > -60)
+        settings.title += "Prochainement";
+      else
+        settings.title += "Repassez plus tard";
+      
+      res.render('notstarted', settings);
+    }
   });
 }
 
@@ -20,11 +33,15 @@ exports.help = function(req, res) {
  *  Method : GET
  */
 exports.error = function(req, res) {
-  data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:false}, function(settings) {
     settings.title += "Erreur";
     settings.error = req.params.error;
     res.render('error', settings);
   });
+}
+
+exports.update = function(req, res) {
+  //TODO: mettre à jour la BDD depuis le XML
 }
 
 /*

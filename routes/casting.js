@@ -10,6 +10,8 @@ var userModel = require('../models/user');
  *  Method : GET
  */
 exports.index = function(req, res) {
+  //TODO: Afficher la page de présentation des conditions d'inscription.
+  // Si candidat inscrit -> /studio/casting/approved
 
   data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
     checkSession(req, res, function() {
@@ -25,8 +27,8 @@ exports.index = function(req, res) {
  *  Route : /casting/check
  *  Accès : L'utilisateur doit être connecté
  *  Method : GET
- */
-exports.check = function(req, res) {
+ *
+exports.apply = function(req, res) {
 
   data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
     checkSession(req, res, function() {
@@ -52,14 +54,15 @@ exports.check = function(req, res) {
   });
 
 }
-
+  */
+  
 /*
  *  Page permettant d'inscrire l'utilisateur afin qu'il puisse accéder à l'aventure
- *  Route : /casting/register
+ *  Route : /casting/apply
  *  Accès : L'utilisateur doit être connecté
- *  Method : GET
+ *  Method : POST
  */
-exports.register = function(req, res) {
+exports.apply = function(req, res) {
 
   data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
     checkSession(req, res, function() {
@@ -115,11 +118,11 @@ exports.register = function(req, res) {
 
 /*
  *  Page d'attente avant la création des équipes
- *  Route : /casting/waiting
+ *  Route : /casting/approved
  *  Accès : L'utilisateur doit être connecté
  *  Method : GET
  */
-exports.waiting = function(req, res) {
+exports.approved = function(req, res) {
 
   data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
     if(req.session.user.type == null) {
@@ -138,6 +141,10 @@ exports.waiting = function(req, res) {
 
   });
 
+}
+
+exports.rejected = function(req, res) {
+  //TODO: afficher la page de rejet.
 }
 
 var checkSession = function(req, res, callback) {

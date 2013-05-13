@@ -8,7 +8,11 @@ var express = require('express')
 
   , routes  = require('./routes')
   , user    = require('./routes/user')
-  , casting = require('./routes/casting');
+  , casting = require('./routes/casting')
+  , studio = require('./routes/studio')
+  , tribe = require('./routes/tribe')
+  , challenge = require('./routes/challenge')
+  , council = require('./routes/council');
 
 var app = express();
 
@@ -37,20 +41,44 @@ if ('development' == app.get('env')) {
 /*
  *  ROUTES
  */
-
-app.get('/', routes.loginredirect);
+app.get('/', routes.index);
 app.get('/login', routes.loginredirect); // Connexion temporaire
 app.post('/login', user.login);
 app.get('/error/:error', routes.error);
-app.get('/help', routes.help);
+
+app.get('/update', routes.update);
 
 /*
- *  ROUTES : Le casting
+ *  ROUTES : Studios
+ *
+ *  Casting
  */
-app.get('/casting', casting.index);
-app.get('/casting/check', casting.check);
-app.get('/casting/register', casting.register);
-app.get('/casting/waiting', casting.waiting);
+app.get('/studio/casting', casting.index);
+app.post('/studio/casting/apply', casting.apply);
+app.get('/studio/casting/approved', casting.approved);
+app.get('/studio/casting/rejected', casting.rejected);
+
+/*
+ *  Support
+ */
+app.get('/studio/denis', studio.denis);
+app.get('/studio/production', studio.production);
+
+/*
+ *  ROUTES : Game
+ */
+app.get('/tribe/:tribe', tribe.details);
+app.get('/tribe/:tribe/:user', tribe.userDetails);
+
+app.get('/challenge/immunity', challenge.immunity);
+app.post('/challenge/immunity/validate', challenge.immunityValidation);
+app.get('/challenge/reward', challenge.reward);
+app.post('/challenge/reward/validate', challenge.rewardValidation);
+
+app.get('/council', council.index);
+app.post('/council/vote', council.vote);
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

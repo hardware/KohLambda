@@ -7,7 +7,7 @@ var userModel = require('../models/user');
 // Fonction pour récupérer les informations sur le jeu et sur l'utilisateur (et sa ville).
 exports.settings = function(req, res, options, callback) {
 
-  if(options.shouldBeLogged && !req.session.user) {
+  if(!!options.shouldBeLogged && !req.session.user) {
     res.redirect('/login');
     return;
   }
@@ -26,12 +26,13 @@ exports.gameSettings = function(req, res, options, callback) {
 
   var gameSettings = {"path":req.path, "title":"KohLambda - "};
 
-  if(req.session.game) {
+  if(req.session.game && !is_expired(req.session.game.lastupdated)) {
     gameSettings.game = req.session.game;
     callback(gameSettings);
   } else {
     settingsModel.getGameSettings(function(gameParams) {
       req.session.game = gameParams;
+      req.session.game.lastupdated = (new Date()).getTime();
       gameSettings.game = req.session.game;
       callback(gameSettings);
     });
@@ -55,12 +56,13 @@ exports.userSettings = function(req, res, options, callback) {
 
   var userSettings = {"user":{}};
   
-  if(req.session.user) {
+  if(req.session.user && !is_expired(req.session.user.lastupdated)) {
     userSettings.user = req.session.user;
     callback(userSettings);
   } else if(req.session.user && req.session.user.key) {
     userModel.findUserByKey(req.session.user.key, function(userParams) {
-      req.session.user = usereParams;
+      req.session.user = userParams;
+      req.session.user.lastupdated = (new Date()).getTime();
       userSettings.user = req.session.user;
       callback(userSettings);
     });
@@ -153,6 +155,11 @@ exports.getXML = function(req, res, userKey, callback) {
     res.redirect('/error/xmlunavailable');
   });
 
+}
+
+var is_expired = function(datetime) {
+  var expiration = 1000*60*60; //1h
+  return (new Date()).getTime() > datetime + expiration;
 }
 
 var mergeObjects = function(obj1, obj2, obj3){
