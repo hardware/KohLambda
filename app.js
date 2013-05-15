@@ -12,7 +12,8 @@ var express = require('express')
   , studio = require('./routes/studio')
   , tribe = require('./routes/tribe')
   , challenge = require('./routes/challenge')
-  , council = require('./routes/council');
+  , council = require('./routes/council')
+  , cron = require('./routes/cron');
 
 var app = express();
 
@@ -78,6 +79,16 @@ app.post('/challenge/reward/validate', challenge.rewardValidation);
 app.get('/council', council.index);
 app.post('/council/vote', council.vote);
 
+/*
+ *  ROUTES : Cron
+ */
+app.get('/cron/to-council/:securekey', cron.switchToCouncil);
+app.get('/cron/to-challenges/:securekey', cron.switchToChallenges);
+app.post('/cron/split-tribes', cron.splitTribes);
+app.post('/cron/validate-immunity', cron.validateImmunity);
+app.post('/cron/validate-reward', cron.validateReward);
+app.post('/cron/validate-council', cron.validateCouncil);
+app.post('/cron/validate-hordes', cron.validateHordes);
 
 
 http.createServer(app).listen(app.get('port'), function(){

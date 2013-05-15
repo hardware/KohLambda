@@ -24,7 +24,14 @@ exports.settings = function(req, res, options, callback) {
 
 exports.gameSettings = function(req, res, options, callback) {
 
-  var gameSettings = {"path":req.path, "title":"KohLambda - "};
+  var gameSettings = {path:               req.path,
+                      title:              "KohLambda - ",
+                      councilStartHour:   19,
+                      councilEndHour:     24,  //End always greater than start
+                      challengeStartHour: 1,
+                      challengeEndHour:   19,
+                      inscriptionDays:    2
+                      };
 
   if(req.session.game && !is_expired(req.session.game.lastupdated)) {
     gameSettings.game = req.session.game;

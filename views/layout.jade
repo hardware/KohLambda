@@ -41,9 +41,12 @@ html
       div#admintools 
         | Outils d'administration
         ul
-          form(action='/cron', method='POST')
+          form(action='/cron/to-council/admin', method='GET')
             li
-              input(type='Submit', value="Simuler un appel du cron")
+              input(type='Submit', value="Passer au conseil")
+          form(action='/cron/to-challenges/admin', method='GET')
+            li
+              input(type='Submit', value="Passer aux épreuves")
           form(action='/cron/split-tribes', method='POST')
             li
               input(type='Submit', value="Créer les équipes")
