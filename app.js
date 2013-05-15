@@ -7,7 +7,8 @@ var express = require('express')
   , path = require('path')
 
   , routes  = require('./routes')
-  , user    = require('./routes/user')
+  , data = require('./routes/data')
+  , account    = require('./routes/account')
   , casting = require('./routes/casting')
   , studio = require('./routes/studio')
   , tribe = require('./routes/tribe')
@@ -44,10 +45,10 @@ if ('development' == app.get('env')) {
  */
 app.get('/', routes.index);
 app.get('/login', routes.loginredirect); // Connexion temporaire
-app.post('/login', user.login);
+app.post('/login', account.login);
 app.get('/error/:error', routes.error);
 
-app.get('/update', routes.update);
+app.get('/update', data.update);
 
 /*
  *  ROUTES : Studios
@@ -90,6 +91,10 @@ app.post('/cron/validate-reward', cron.validateReward);
 app.post('/cron/validate-council', cron.validateCouncil);
 app.post('/cron/validate-hordes', cron.validateHordes);
 
+// 404 Page
+app.use(function(req, res, next){
+  res.redirect('/error/404');
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

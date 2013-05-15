@@ -1,8 +1,9 @@
-var pg = require('pg');
-var http = require('http');
-var xml2js = require('xml2js');
-var settingsModel = require('../models/settings');
-var userModel = require('../models/user');
+var pg = require('pg')
+  , http = require('http')
+  , xml2js = require('xml2js')
+  , gameModel = require('../models/game')
+  , userModel = require('../models/user')
+  , cityModel = require('../models/city');
 
 // Fonction pour récupérer les informations sur le jeu et sur l'utilisateur (et sa ville).
 exports.settings = function(req, res, options, callback) {
@@ -15,7 +16,19 @@ exports.settings = function(req, res, options, callback) {
   exports.gameSettings(req, res, options, function(gameSettings) {
     exports.userSettings(req, res, options, function(userSettings) {
       exports.citySettings(req, res, options, function(citySettings) {
-        callback(mergeObjects(gameSettings, citySettings, userSettings));
+        var settings = {  path:               req.path,
+                          title:              "KohLambda - ",
+                          councilStartHour:   19,
+                          councilEndHour:     24,  //End always greater than start
+                          challengeStartHour: 1,
+                          challengeEndHour:   19,  //End always greater than start
+                          inscriptionDays:    2
+                        };
+        settings.game = gameSettings;
+        settings.city = citySettings;
+        settings.user = userSettings;
+        
+        callback(settings);
       });
     });
   });
@@ -24,23 +37,16 @@ exports.settings = function(req, res, options, callback) {
 
 exports.gameSettings = function(req, res, options, callback) {
 
-  var gameSettings = {path:               req.path,
-                      title:              "KohLambda - ",
-                      councilStartHour:   19,
-                      councilEndHour:     24,  //End always greater than start
-                      challengeStartHour: 1,
-                      challengeEndHour:   19,
-                      inscriptionDays:    2
-                      };
+  var gameSettings = 0;
 
-  if(req.session.game && !is_expired(req.session.game.lastupdated)) {
-    gameSettings.game = req.session.game;
+  if(req.session.game && !is_expired(req.session.game.sessioncached)) {
+    gameSettings = req.session.game;
     callback(gameSettings);
   } else {
-    settingsModel.getGameSettings(function(gameParams) {
-      req.session.game = gameParams;
-      req.session.game.lastupdated = (new Date()).getTime();
-      gameSettings.game = req.session.game;
+    gameModel.getGame(function(game) {
+      req.session.game = game;
+      req.session.game.sessioncached = (new Date()).getTime();
+      gameSettings = req.session.game;
       callback(gameSettings);
     });
   }
@@ -49,71 +55,117 @@ exports.gameSettings = function(req, res, options, callback) {
 
 exports.citySettings = function(req, res, options, callback) {
 
-  var citySettings = {"city":{}};
+  var citySettings = 0;
 
-  if(req.session.city) {
-    citySettings.city = req.session.city;
+  if(req.session.city && !is_expired(req.session.city.sessioncached)) {
+    citySettings = req.session.city;
+    callback(citySettings);
+  } else if(req.session.user && req.session.game) {
+    var data = {  userId: req.session.user.key,
+                  season: req.session.game.season   };
+    cityModel.findUserCity(data, function(cityParams) {
+      req.session.city = cityParams;
+      if(req.session.city) {
+        req.session.city.sessioncached = (new Date()).getTime();
+        citySettings = req.session.city;
+      }
+      callback(citySettings);
+    });
+  } else {
+    callback(citySettings);
   }
-
-  callback(citySettings);
-
 }
 
 exports.userSettings = function(req, res, options, callback) {
 
-  var userSettings = {"user":{}};
+  var userSettings = 0;
   
-  if(req.session.user && !is_expired(req.session.user.lastupdated)) {
-    userSettings.user = req.session.user;
+  if(req.session.user && !is_expired(req.session.user.sessioncached)) {
+    userSettings = req.session.user;
     callback(userSettings);
   } else if(req.session.user && req.session.user.key) {
     userModel.findUserByKey(req.session.user.key, function(userParams) {
       req.session.user = userParams;
-      req.session.user.lastupdated = (new Date()).getTime();
-      userSettings.user = req.session.user;
+      req.session.user.sessioncached = (new Date()).getTime();
+      userSettings = req.session.user;
       callback(userSettings);
     });
   } else {
-      callback(userSettings);
+    callback(userSettings);
   }
 
 }
 
-exports.update = function(req, res, userkey, callback) {
+exports.update = function(req, res) {
+  //Expires all sessions
+  if(req.session.game) req.session.game.sessioncached = 0;
+  if(req.session.user) req.session.user.sessioncached = 0;
+  if(req.session.city) req.session.city.sessioncached = 0;
+  
+  if(req.session.user && req.session.user.key) {
+    exports.getXML(req, res, req.session.user.key, function(hordes) {
+      if(hordes.error) {
+        // Switch sur les possibles erreurs de hordes concernant la ville.
+        switch(hordes.error.$.code) {
+          case 'user_not_found':
+            // Suppression de la session utilisateur
+            req.session.user = null;
+            res.redirect('/error/usernotfound');
+            break;
+          case 'horde_attacking':
+            res.redirect('/error/attack');
+            break;
+          case 'not_in_game':
+            res.redirect('/error/notingame');
+            break;
+          case 'maintain':
+            res.redirect('/error/maintain');
+            break;
+          default:
+            res.redirect('/error/'+result.hordes.error.$.code);
+        }
+      } else {
 
-  exports.getXML(req, res, userkey, function(hordes) {
-    if(hordes.error) {
-      // Switch sur les possibles erreurs de hordes concernant la ville.
-      switch(hordes.error.$.code) {
-        case 'user_not_found':
-          // Suppression de la session utilisateur
-          req.session.user = null;
-          res.redirect('/error/usernotfound');
-          break;
-        case 'horde_attacking':
-          res.redirect('/error/attack');
-          break;
-        case 'not_in_game':
-          res.redirect('/error/notingame');
-          break;
-        case 'maintain':
-          res.redirect('/error/maintain');
-          break;
-        default:
-          res.redirect('/error/'+result.hordes.error.$.code);
+        var userData = {
+          id:       req.session.user.id,
+          //  name:     hordes.owner.citizen.$.name,   // -> Avec l'accès sécurisé
+          updated:  new Date()
+        };
+        
+        var cityData = {
+          id:     hordes.headers.game.$.id,
+          name:   hordes.data.city.$.city,
+          day:    hordes.headers.game.$.days
+        };
+        
+        var findUserCityData = {
+          userId: req.session.user.key,
+          season: req.session.game.season
+        }
+        
+        userModel.updateUser(userData, function() {
+          cityModel.findUserCity(findUserCityData, function(citySettings) {
+            if(citySettings) {
+              cityModel.updateCity(cityData, function() {
+                res.redirect('/');
+              });
+            } else {
+              cityData.id_user = req.session.user.id;
+              cityData.user_key = req.session.user.key;
+              cityData.season = req.session.game.season;
+              
+              cityModel.addCity(cityData, function() {
+                res.redirect('/');
+              });
+            }
+          });
+        });
       }
-    } else {
-      // req.session.user.name = hordes.owner.citizen.$.name -> Avec l'accès sécurisé
-
-      req.session.city = {
-        "name": hordes.data.city.$.city,
-        "day": hordes.headers.game.$.days,
-        "id": hordes.headers.game.$.id
-      };
-
-      callback();
-    }
-  });
+    });
+  } else {
+    res.redirect('/login');
+  }
+  
 
 }
 
@@ -167,12 +219,4 @@ exports.getXML = function(req, res, userKey, callback) {
 var is_expired = function(datetime) {
   var expiration = 1000*60*60; //1h
   return (new Date()).getTime() > datetime + expiration;
-}
-
-var mergeObjects = function(obj1, obj2, obj3){
-  var obj = {};
-  for (var attr in obj1) { obj[attr] = obj1[attr]; }
-  for (var attr in obj2) { obj[attr] = obj2[attr]; }
-  for (var attr in obj3) { obj[attr] = obj3[attr]; }
-  return obj;
 }

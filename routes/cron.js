@@ -5,11 +5,11 @@ exports.switchToCouncil = function(req, res) {
   //TODO: Vérifier l'authentification du cron req.params.securekey
   //Vérifier que si la clé sécurisée est "dev" et que la personne est admin, elle puisse valider.
   
-  data.gameSettings(req, res, {}, function(settings) {  
+  data.settings(req, res, {}, function(gameSettings) {  
     var currentHour = new Date().getHours();
-    var whenInscriptions = settings.game.day >= 0 && settings.game.day < settings.inscriptionDays;
-    var whenJustStarted = settings.game.day = settings.inscriptionDays;
-    var whenStarted = settings.game.day >= settings.inscriptionDays;
+    var whenInscriptions = gameSettings.day >= 0 && gameSettings.day < gameSettings.inscriptionDays;
+    var whenJustStarted = gameSettings.day = gameSettings.inscriptionDays;
+    var whenStarted = gameSettings.game.day >= gameSettings.inscriptionDays;
     
     if(whenInscriptions || whenStarted) exports.validateHordes(req, res);
     
@@ -18,6 +18,7 @@ exports.switchToCouncil = function(req, res) {
       exports.validateReward(req, res);
     }
     
+    res.send('ok');
   });
 }
 

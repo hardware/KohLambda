@@ -72,36 +72,21 @@ exports.apply = function(req, res) {
       var helper = req.session.city.day > 0 && req.session.city.registered;
 
       if(leader) {
+        var userData = {userType: "leader",
+                        userId:   req.session.user.id};
 
-        var cityData = {
-          "cityId":   req.session.city.id,
-          "cityName": req.session.city.name,
-          "season":   req.session.game.season,
-          "cityDay":  req.session.city.day,
-          "userKey":  req.session.user.key,
-          "userId":   req.session.user.id
-        };
-
-        // La ville n'existe pas donc on l'ajoute dans la BDD
-        cityModel.addCity(cityData, function(result) {
-
-          var userData = {"userType":"leader", "userId":req.session.user.id};
-
-          // Mise à jour du statut du joueur (leader)
-          userModel.updateUserType(userData, function(result) {
-            req.session.user.type = 'leader';
-            res.redirect('/casting/waiting');
-          });
+        // Mise à jour du statut du joueur (leader)
+        userModel.updateUserType(userData, function(result) {
+          req.session.user.type = 'leader';
+          res.redirect('/studio/casting/approved');
         });
-
       } else if(helper) {
-
         var userData = {"userType":"helper", "userId":req.session.user.id};
 
         // Mise à jour du statut du joueur (helper)
         userModel.updateUserType(userData, function(result) {
           req.session.user.type = 'helper';
-          res.redirect('/casting/waiting');
+          res.redirect('/studio/casting/rejected');
         });
 
       } else {
@@ -150,12 +135,12 @@ exports.rejected = function(req, res) {
 var checkSession = function(req, res, callback) {
 
   if(req.session.user.type != null) {
-    res.redirect('/casting/waiting');
+    res.redirect('/studio/casting/approved');
     return;
-  } else if(!req.session.city) {
+  } /*else if(!req.session.city) {
     res.redirect('/error/nocityinfo');
     return;
-  } else {
+  } */else {
     callback();
   }
 

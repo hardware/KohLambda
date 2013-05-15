@@ -38,7 +38,8 @@ block content
       p Vous pouvez rejoindre l'aventure.
         br
         | En cliquant sur rejoindre, vous acceptez le sort que vous réservent vos coéquipiers.
-      a.register(href='/casting/register') Rejoindre
+      form(action='/studio/casting/apply', method='POST', name='applyform')
+        a.register(onclick='applyform.submit()') Rejoindre
     if helper
       h1 Ne soyer pas déçu !
       p Vous accédez malgré tout au statut d'aideur.
