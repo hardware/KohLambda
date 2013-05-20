@@ -81,9 +81,9 @@ app.post('/council/vote', council.vote);
 /*
  *  ROUTES : Cron
  */
-app.get('/cron/to-council/:securekey', cron.switchToCouncil);
-app.get('/cron/to-challenges/:securekey', cron.switchToChallenges);
 app.post('/cron/split-tribes', cron.splitTribes);
+app.post('/cron/to-council/:securekey', cron.switchToCouncil);
+app.post('/cron/to-challenges/:securekey', cron.switchToChallenges);
 app.post('/cron/validate-immunity', cron.validateImmunity);
 app.post('/cron/validate-reward', cron.validateReward);
 app.post('/cron/validate-council', cron.validateCouncil);
