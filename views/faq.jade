@@ -1,0 +1,56 @@
+extends layout
+
+block content
+  h1 FAQ
+
+  h2 Sommaire
+  h3 Le casting
+  ul
+    li: a(href='#q1') Comment puis-je rejoindre l'aventure ?
+    li: a(href='#q2') Ma ville n'est pas au jour 1, je peux quand même rejoindre une partie ?
+    li: a(href='#q3') Ma ville est déjà enregistrée par quelqu'un d'autre, ça veux dire quoi ?
+    li: a(href='#q4') Qu'est ce que c'est le statut de leader ?
+    li: a(href='#q5') Qu'est ce que c'est le statut d'aideur ?
+    li: a(href='#q6') Combien de temps dure la phase de casting ?
+  h3 La répartition des joueurs
+  ul
+    li: a(href='#q7') Comment les joueurs sont-ils répartis ?
+    li: a(href='#q8') A quel moment les joueurs sont répartis dans les équipes ?
+
+  h2 Le casting
+  h3#q1 > Comment puis-je rejoindre l'aventure ?
+  p Pour participer à l'aventure vous devez passer par l'étape du casting. Lors de votre première connexion,
+    | vous êtes directement redirigé vers une page permettant de vous inscrire. Sur cette page, 3 conditions sont requises afin de valider
+    | votre candidature pour la saison actuelle de KohLambda :
+  ul
+    li Etre incarné dans une ville
+    li Etre encore au jour 1
+    li Etre le premier de votre ville à être inscrit
+  p Si les 3 conditions sont bonnes, vous pouvez vous inscrire immédiatement en cliquant sur le bouton "Rejoindre".
+
+  h3#q2 > Ma ville n'est pas au jour 1, je peux quand même rejoindre une partie ?
+  p Non, vous ne pouvez pas.
+
+  h3#q3 > Ma ville est déjà enregistrée par quelqu'un d'autre, ça veux dire quoi ?
+  p Ça veut dire qu'un autre joueur de votre ville (le pseudo est indiqué) s'est inscrit avant vous pour la saison actuelle de KohLambda,
+    | il devient donc le représentant principal de votre ville et obtient donc le statut de "LEADER".
+  P À partir de ce moment là, vous ne pouvez plus participer à l'aventure mais seulement suivre le parcours du leader sans avoir aucun moyen d'intervenir sur la partie.
+    | Deux options s'offrent à vous : soit vous acceptez votre statut d'aideur, soit vous trouvez un moyen de tuer le leader sur Hordes
+    | afin de prendre sa place dans l'aventure... c'est vous qui décidez ;)
+
+  h3#q4 > Qu'est ce que c'est le statut de leader ?
+  p Un joueur obtient le statut de leader lorsqu'il est le premier de sa ville à s'être inscrit lors de l'étape du casting.
+
+  h3#q5 > Qu'est ce que c'est le statut d'aideur ?
+  p Un joueur obtient le statut d'aideur lorsqu'il n'est pas le premier de sa ville à s'être inscrit lors de l'étape du casting.
+
+  h3#q6 > Combien de temps dure la phase de casting ?
+  p La phase de casting dure 2 jours. Une fois ce délai terminé, il est impossible de s'inscrire pour la saison actuelle.
+
+  h2 La répartition des joueurs
+
+  h3#q7 > Comment les joueurs sont-ils répartis ?
+  p Les joueurs sont répartis de manière aleatoire dans deux équipes distinctes : les rouges et les jaunes.
+
+  h3#q8 > A quel moment les joueurs sont répartis dans les équipes ?
+  p La phase de répartition démarre lorsque le casting est terminé.

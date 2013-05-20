@@ -15,7 +15,7 @@ exports.index = function(req, res) {
     checkCityRegistration(req, res, function() {
       settings.title += "Casting";
       res.render('casting', settings);
-    })
+    });
   });
 
 }

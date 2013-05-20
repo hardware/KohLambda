@@ -80,6 +80,10 @@ footer {
   z-index: 9;
   position: relative;
 }
+h3 {
+  font-family: rtext, sans-serif;
+  font-size: 20px;
+}
 .ordeal {
   width: 720px;
   height: 137px;

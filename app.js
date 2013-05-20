@@ -59,10 +59,10 @@ app.get('/studio/casting/rejected', casting.rejected);
 app.post('/studio/casting/apply', casting.apply);
 
 /*
- *  Support
+ *  ROUTES : Support
  */
-app.get('/studio/denis', studio.denis);
-app.get('/studio/production', studio.production);
+app.get('/support/help', studio.help);
+app.get('/support/faq', studio.faq);
 
 /*
  *  ROUTES : Game
