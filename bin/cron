@@ -1,10 +1,11 @@
-#! /app/bin/node
+#!/usr/bin/env node
 
+var argv = require('optimist').argv;
 var request = require('request');
 
 var options = {
   method:'POST',
-  uri:'http://www.kohlambda.fr/cron/split-tribes',
+  uri:'http://www.kohlambda.fr/cron/'+argv.task,
   form:{secureKey:'yjppWBJ5r7AmMLARPwkcb'}
 };
 

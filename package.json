@@ -11,7 +11,8 @@
     "pg": "1.1.x",
     "xml2js": "0.2.x",
     "async": "0.2.x",
-    "request": "2.21.x"
+    "request": "2.21.x",
+    "optimist": "0.5.x"
   },
   "engines": {
     "node": "0.10.x",
