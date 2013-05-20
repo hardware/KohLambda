@@ -4,11 +4,10 @@ block content
   .ordeal= "Rien ne sert de courir, il faut partir à point."
   p La première épreuve sur Koh-Lambda est l'inscription.
     br
-    | Pour pouvoir rejoindre l'aventure, vous devez répondre à certains critères, listés ci-dessous.
-    br
-    | La mise à jour n'est pas automatique, vous devez appuyer sur le bouton de mise à jour manuellement.
+    | Pour pouvoir rejoindre l'aventure, vous devez répondre à certains critères, listés ci-dessous :
   ul.checklist
     - var able = true
+    - var helper = false
 
     if city
       li.ok Vous êtes actuellement incarné
@@ -27,21 +26,23 @@ block content
       li.ok Votre ville n'a pas encore été enregistrée
     else
       if able
-        - var helper = true
+        - helper = true
       - able = false
       li.ko Votre ville a déjà été enregistrée par #{city.leader}
   center
     if !able
-      p Vous n'avez pas tous les pré-requis pour rejoindre l'aventure :(
-      .noregister
+      if !helper
+        p Vous n'avez pas tous les pré-requis pour rejoindre l'aventure :(
+        .noregister
     else
       p Vous pouvez rejoindre l'aventure.
         br
         | En cliquant sur rejoindre, vous acceptez le sort que vous réservent vos coéquipiers.
       form(action='/studio/casting/apply', method='POST', name='applyform')
-        a.register(onclick='applyform.submit()') Rejoindre
+        a.register(href='#', onclick='applyform.submit()') Rejoindre
     if helper
-      h1 Ne soyer pas déçu !
-      p Vous accédez malgré tout au statut d'aideur.
-        br
-        | Vous aurez donc la possibilité de voir l'aventure du joueur présent dans votre ville.
+      p
+        | Vous n'avez pas tous les pré-requis pour rejoindre l'aventure, mais vous accédez malgré tout au statut d'aideur.
+        | Vous avez donc la possibilité de voir l'aventure du joueur présent dans votre ville.
+      form(action='/studio/casting/apply', method='POST', name='applyform')
+        a.register(href='#', onclick='applyform.submit()') Rejoindre

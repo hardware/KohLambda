@@ -2,16 +2,21 @@ extends layout
 
 block content
   .ordeal= "En attente de d'autres aventuriers"
-  p Vous voila maintenant dans la salle d'attente du studio, que le temps vous semble long...
-    | Mais ceci est nécessaire afin qu'un maximum de joueurs puissent participer à l'aventure.
-  
-  - if (leaders.length > 0)
-    p Liste des joueurs participants à l'aventure :
-    ul.checklist
-      each leader in leaders
-        li.adventurer=leader.name
-  - if (helpers.length > 0)
-    p Liste des joueurs avec le statut d'aideur :
-    ul.checklist
-      each helper in helpers
-        li.adventurer=helper.name
+  - if (typeof(leaders) != 'undefined')
+    p Vous voila maintenant dans la salle d'attente du studio, que le temps vous semble long...
+      | Mais ceci est nécessaire afin qu'un maximum de joueurs puissent participer à l'aventure.
+
+    - if (leaders.length > 0)
+      p Liste des joueurs participant à l'aventure :
+      ul.checklist
+        each leader in leaders
+          li.adventurer=leader.name
+  - if (typeof(helpers) != 'undefined')
+    p Votre candidature n'a pas été retenue, vous ne pouvez donc pas rejoindre l'aventure.
+     | Mais vous accédez malgré tout au statut d'aideur afin de suivre le parcours du joueur représentant votre ville.
+
+    - if (helpers.length > 0)
+      p Liste des joueurs avec le statut d'aideur :
+      ul.checklist
+        each helper in helpers
+          li.adventurer=helper.name

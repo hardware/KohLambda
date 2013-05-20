@@ -1,18 +1,24 @@
 var data = require('./data');
 
+/*
+ *  Page d'accueil
+ *  Route : /
+ *  Accès : public
+ *  Method : GET
+ */
 exports.index = function(req, res) {
   //TODO: Afficher la page d'accueil
   data.settings(req, res, {shouldBeLogged:false}, function(settings) {
-    if(settings.game.day > 1) {                       // Jeu commencé
+    if(settings.game.day == 0) {                      // Inscriptions
+      res.redirect('/studio/casting');
+    } else if(settings.game.day > 1) {                // Jeu commencé
       if(settings.user.tribe != null) {
         res.redirect('/tribe/'+settings.user.tribe);  // Joueur > Redirection vers la tribu
       } else {
         res.redirect('/challenge/immunity');          // Visiteur > Redirection vers l'épreuve d'immunité
       }
-    } else if(settings.game.day >= 0) {               // Inscriptions
-      res.redirect('/studio/casting/');
     } else {
-      if(settings.game.day > -10)                // Différents titres suivant 
+      if(settings.game.day > -10)
         settings.title += "Tenez vous prêts !";
       else if(settings.game.day > -30)
         settings.title += "Bientôt...";
@@ -20,7 +26,7 @@ exports.index = function(req, res) {
         settings.title += "Prochainement";
       else
         settings.title += "Repassez plus tard";
-      
+
       res.render('notstarted', settings);
     }
   });

@@ -27,7 +27,7 @@ exports.settings = function(req, res, options, callback) {
         settings.game = gameSettings;
         settings.city = citySettings;
         settings.user = userSettings;
-        
+
         callback(settings);
       });
     });
@@ -61,7 +61,7 @@ exports.citySettings = function(req, res, options, callback) {
     citySettings = req.session.city;
     callback(citySettings);
   } else if(req.session.user && req.session.game) {
-    var data = {  userId: req.session.user.key,
+    var data = {  userId: req.session.user.id,
                   season: req.session.game.season   };
     cityModel.findUserCity(data, function(cityParams) {
       req.session.city = cityParams;
@@ -79,7 +79,7 @@ exports.citySettings = function(req, res, options, callback) {
 exports.userSettings = function(req, res, options, callback) {
 
   var userSettings = 0;
-  
+
   if(req.session.user && !is_expired(req.session.user.sessioncached)) {
     userSettings = req.session.user;
     callback(userSettings);
@@ -101,7 +101,7 @@ exports.update = function(req, res) {
   if(req.session.game) req.session.game.sessioncached = 0;
   if(req.session.user) req.session.user.sessioncached = 0;
   if(req.session.city) req.session.city.sessioncached = 0;
-  
+
   if(req.session.user && req.session.user.key) {
     exports.getXML(req, res, req.session.user.key, function(hordes) {
       if(hordes.error) {
@@ -127,22 +127,23 @@ exports.update = function(req, res) {
       } else {
 
         var userData = {
-          id:       req.session.user.id,
+          id: req.session.user.id,
+          key: req.session.user.key,
           //  name:     hordes.owner.citizen.$.name,   // -> Avec l'accès sécurisé
-          updated:  new Date()
+          updated:  (new Date())
         };
-        
+
         var cityData = {
           id:     hordes.headers.game.$.id,
           name:   hordes.data.city.$.city,
           day:    hordes.headers.game.$.days
         };
-        
+
         var findUserCityData = {
-          userId: req.session.user.key,
+          userId: req.session.user.id,
           season: req.session.game.season
         }
-        
+
         userModel.updateUser(userData, function() {
           cityModel.findUserCity(findUserCityData, function(citySettings) {
             if(citySettings) {
@@ -151,9 +152,8 @@ exports.update = function(req, res) {
               });
             } else {
               cityData.id_user = req.session.user.id;
-              cityData.user_key = req.session.user.key;
               cityData.season = req.session.game.season;
-              
+
               cityModel.addCity(cityData, function() {
                 res.redirect('/');
               });
@@ -165,7 +165,7 @@ exports.update = function(req, res) {
   } else {
     res.redirect('/login');
   }
-  
+
 
 }
 
@@ -180,7 +180,6 @@ exports.getXML = function(req, res, userKey, callback) {
   };
 
   var httpReq = http.get(options, function(httpRes) {
-
     // Réception des blocs de données puis concaténation des chunks dans un buffer
     // Voir Chunked transfer encoding
     httpRes.on('data', function (chunk) {
@@ -196,27 +195,11 @@ exports.getXML = function(req, res, userKey, callback) {
         }
       });
     });
-
-  });
-
-  // Si la requête est trop longue => timeout !
-  httpReq.on('socket', function(socket) {
-    socket.setTimeout(5000);
-    socket.on('timeout', function() {
-      httpReq.abort();
-      res.redirect('/error/xmltimeout');
-    });
-  });
-
-  // Si une erreur survient
-  httpReq.on('error', function(err) {
-    httpReq.abort();
-    res.redirect('/error/xmlunavailable');
   });
 
 }
 
 var is_expired = function(datetime) {
-  var expiration = 1000*60*60; //1h
+  var expiration = 1000*60*60; // 1h en ms
   return (new Date()).getTime() > datetime + expiration;
 }

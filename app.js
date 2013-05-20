@@ -24,7 +24,6 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.compress());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('f6GLCNSWbqI73yjppWBJ5r7AmMLARPwkcbHw6PY3'));
@@ -45,10 +44,9 @@ if ('development' == app.get('env')) {
  */
 app.get('/', routes.index);
 app.get('/login', routes.loginredirect); // Connexion temporaire
-app.post('/login', account.login);
 app.get('/error/:error', routes.error);
-
 app.get('/update', data.update);
+app.post('/login', account.login);
 
 /*
  *  ROUTES : Studios
@@ -56,9 +54,9 @@ app.get('/update', data.update);
  *  Casting
  */
 app.get('/studio/casting', casting.index);
-app.post('/studio/casting/apply', casting.apply);
 app.get('/studio/casting/approved', casting.approved);
 app.get('/studio/casting/rejected', casting.rejected);
+app.post('/studio/casting/apply', casting.apply);
 
 /*
  *  Support
@@ -73,8 +71,8 @@ app.get('/tribe/:tribe', tribe.details);
 app.get('/tribe/:tribe/:user', tribe.userDetails);
 
 app.get('/challenge/immunity', challenge.immunity);
-app.post('/challenge/immunity/validate', challenge.immunityValidation);
 app.get('/challenge/reward', challenge.reward);
+app.post('/challenge/immunity/validate', challenge.immunityValidation);
 app.post('/challenge/reward/validate', challenge.rewardValidation);
 
 app.get('/council', council.index);

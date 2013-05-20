@@ -1,6 +1,7 @@
-var pg = require('pg');
-var data = require('./data');
-var userModel = require('../models/user');
+var pg = require('pg')
+  , async = require('async')
+  , data = require('./data')
+  , userModel = require('../models/user');
 
 /*
  *  Page de connexion de l'utilisateur via l'annuaire (méthode POST)
@@ -9,7 +10,7 @@ var userModel = require('../models/user');
  *  Method : POST
  *  Paramètres : key (identifiant externe de l'utilisateur)
  */
-exports.login = function(req, res){
+exports.login = function(req, res) {
 
   if(!req.body.key) {
     res.redirect('/login');
@@ -17,29 +18,38 @@ exports.login = function(req, res){
   }
 
   // Ajout de la clé à la session de l'utilisateur
-  req.session.user = {key:  req.body.key};
+  req.session.user = {key: req.body.key};
 
   userModel.findUserByKey(req.session.user.key, function(result) {
-
-    if(result) req.session.user = result;
-    else register(req, res);
-    
-    data.update(req, res);
-    
+    async.series([
+      function(callback) {
+        if(result) {
+          req.session.user = result;
+          callback();
+        } else {
+          register(req, res, callback);
+        }
+      },
+      function() {
+        data.update(req, res);
+      }
+    ]);
   });
 }
+
+
 
 /*
  *  Fonction permettant d'enregistrer le joueur dans la BDD
  */
-var register = function(req, res) {
+var register = function(req, res, callback) {
 
   var name = '';
 
   switch(req.session.user.key) {
     case '5e03e132efe39d02b4004307f8d32d22':
       name = 'Liezon'; break;
-    case '4febc3b627fa9e99c265241c55321969':
+    case '761e1a36c9c2fa7561f83fb62733f7b2':
       name = 'Hardware'; break;
     case 'b1ae32bdd1918bb0d9d6d18bf3997b41':
       name = 'Diaruga'; break;
@@ -81,14 +91,15 @@ var register = function(req, res) {
     return;
   }
 
-  var data = {name:     name,
-              key:  req.session.user.key};
+  var data = {name: name, key: req.session.user.key};
 
   userModel.addUser(data, function(result) {
     // Création de la session du nouvel utilisateur
     req.session.user.id = result.rows[0].id;
     req.session.user.name = name;
     req.session.user.type = null;
+
+    callback();
   });
 
 }

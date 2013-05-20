@@ -1,5 +1,4 @@
 div#debug
-  center Les informations çi-dessous peuvent être utiles pour debugger l'application, si vous voyez quelque chose d'anormal, prévenez un développeur.
   table
     tr
       th GAME_INFO
@@ -8,28 +7,22 @@ div#debug
     tr
       td
         if !game
-          span {error : nodata}
-            br
-            | Prevenez un administrateur !
+          span {nodata}
         else
           ul
             each key, val in game
-              li { #{val} : #{key} }
+              li <strong>#{val}</strong> : #{key}
       td
         if !user
           span {error : nodata}
-            br
-            | Prevenez un administrateur !
         else
           ul
             each key, val in user
-              li { #{val} : #{key} }
+              li <strong>#{val}</strong> : #{key}
       td
         if !city
-          span {error : nodata}
-            br
-            | Prevenez un administrateur !
+          span {nodata}
         else
           ul
             each key, val in city
-              li { #{val} : #{key} }
+              li <strong>#{val}</strong> : #{key}

@@ -150,9 +150,10 @@ ul.checklist li {
   box-shadow: 0px 0px 3px #b8925f;
 }
 ul.checklist li.adventurer {
-  font-size: 20px;
+  font-size: 18px;
+  padding: 2px 20px;
   margin: 0 auto;
-  width: 400px;
+  width: 270px;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -190,6 +191,8 @@ p {
   color: black;
   font-family: arial, sans-serif;
   border-top: 10px solid #b8925f;
+  font-size: 11px;
+  position: absolute;
 }
 #admintools {
   position: absolute;

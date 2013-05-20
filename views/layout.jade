@@ -33,12 +33,12 @@ html
               img(src='/images/day_maj.png')
             else
               img(src='/images/night_maj.png')
-              
+
     div#container
       block content
-      
+
     if user.admin
-      div#admintools 
+      div#admintools
         | Outils d'administration
         ul
           form(action='/cron/to-council/admin', method='GET')
@@ -63,3 +63,5 @@ html
             li
               input(type='Submit', value="Vérifier les statuts sur Hordes")
     footer
+    if user.admin
+      include debug

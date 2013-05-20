@@ -7,7 +7,6 @@ exports.findUserByKey = function(userKey, callback) {
       done();
       if(result.rowCount == 1) {
         callback(result.rows[0]);
-        console.dir(result.rows[0]);
       } else
         callback(null);
     });
@@ -75,7 +74,6 @@ exports.updateUser = function(data, callback) {
     client.query('UPDATE public.users SET ' + set + ' WHERE id = $1',
     values, function(err, result) {
       done();
-      console.log('user updated');
       if(result.rowCount == 1)
         callback(result);
       else
