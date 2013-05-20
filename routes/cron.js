@@ -4,20 +4,20 @@ var data = require('./data');
 exports.switchToCouncil = function(req, res) {
   //TODO: Vérifier l'authentification du cron req.params.securekey
   //Vérifier que si la clé sécurisée est "dev" et que la personne est admin, elle puisse valider.
-  
-  data.settings(req, res, {}, function(gameSettings) {  
+
+  data.settings(req, res, {}, function(gameSettings) {
     var currentHour = new Date().getHours();
     var whenInscriptions = gameSettings.day >= 0 && gameSettings.day < gameSettings.inscriptionDays;
     var whenJustStarted = gameSettings.day = gameSettings.inscriptionDays;
     var whenStarted = gameSettings.game.day >= gameSettings.inscriptionDays;
-    
+
     if(whenInscriptions || whenStarted) exports.validateHordes(req, res);
-    
+
     if(whenStarted) {
       exports.validateImmunity(req, res);
       exports.validateReward(req, res);
     }
-    
+
     res.send('ok');
   });
 }
@@ -25,24 +25,28 @@ exports.switchToCouncil = function(req, res) {
 exports.switchToChallenges = function(req, res) {
   //TODO: Vérifier l'authentification du cron req.params.securekey
   //Vérifier que si la clé sécurisée est "dev" et que la personne est admin, elle puisse valider.
-  
-  data.gameSettings(req, res, {}, function(settings) {  
+
+  data.gameSettings(req, res, {}, function(settings) {
     var currentHour = new Date().getHours();
     var whenInscriptions = settings.game.day >= 0 && settings.game.day < settings.inscriptionDays;
     var whenJustStarted = settings.game.day = settings.inscriptionDays;
     var whenStarted = settings.game.day >= settings.inscriptionDays;
-    
+
     if(whenInscriptions || whenStarted) exports.validateHordes(req, res);
-    
+
     if(whenJustStarted) exports.splitTribes(req, res);
-    
+
     if(whenStarted) exports.validateCouncil(req, res);
-    
+
   });
 }
 
 exports.splitTribes = function(req, res) {
-  //TODO: Diviser les joueurs en deux équipes
+  if(req.body.secureKey && req.body.secureKey == 'yjppWBJ5r7AmMLARPwkcb') {
+    res.send('ok');
+  } else {
+    res.send('invalid_keys');
+  }
 }
 
 exports.validateImmunity = function(req, res) {

@@ -1,0 +1,13 @@
+#! /app/bin/node
+
+var request = require('request');
+
+var options = {
+  method:'POST',
+  uri:'http://www.kohlambda.fr/cron/split-tribes',
+  form:{secureKey:'yjppWBJ5r7AmMLARPwkcb'}
+};
+
+request(options, function (error, response, body) {
+  if (!error && response.statusCode == 200) console.log(body);
+});
