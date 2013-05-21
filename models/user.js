@@ -17,7 +17,7 @@ exports.findUserByKey = function(userKey, callback) {
 exports.findUsersByType = function(userType, callback) {
 
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT name FROM public.users WHERE type = $1', [userType], function(err, result) {
+    client.query('SELECT id, name FROM public.users WHERE type = $1', [userType], function(err, result) {
       done();
       callback(result);
     });

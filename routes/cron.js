@@ -1,6 +1,8 @@
 var pg = require('pg')
   , async = require('async')
-  , data = require('./data');
+  , data = require('./data')
+  , userModel = require('../models/user.js')
+  , tribeModel = require('../models/tribe.js')
 
 /*
                 ####### Heroku scheduler #######
@@ -68,7 +70,7 @@ exports.switchToChallenges = function(req, res) {
         // ETAPE 2 : Partage des équipes (Si les inscriptions sont finies)
         function(callback) {
           if(settings.game.day == 2)
-            exports.splitTribes(req, res);
+            exports.splitTribes(req, res, settings.game.season);
           callback();
         },
         // ETAPE 3 : Validation du conseil
@@ -98,8 +100,41 @@ exports.switchToChallenges = function(req, res) {
   });
 }
 
-exports.splitTribes = function(req, res) {
-  //TODO: Faire le split des équipes
+exports.splitTribes = function(req, res, season) {
+
+  // Algorithme de Fisher-Yates (permutation aléatoire)
+  function fisherYatesShuffle(array) {
+    var i = array.length, j, temp;
+    while ( --i ) {
+       j = Math.floor( Math.random() * ( i + 1 ) );
+       temp = array[i];
+       array[i] = array[j];
+       array[j] = temp;
+     }
+  }
+
+  userModel.findUsersByType('leader', function(result) {
+
+    var usersList = result.rows;
+    var usersListSorted = [];
+    var nbUsers = result.rowCount;
+    var usersPerTeam = Math.round((nbUsers)/2);
+
+    // Mélange aléatoire des joueurs
+    fisherYatesShuffle(usersList);
+
+    // Répartition dans les deux équipes
+    for (var i = 0; i < usersPerTeam; i++)
+      usersListSorted[i] = {tribe:'red', season:season, id:usersList[i].id};
+
+    for (var j = usersPerTeam; j < nbUsers; j++)
+      usersListSorted[j] = {tribe:'yellow', season:season, id:usersList[j].id};
+
+    // Ajoute chaque joueur les uns après les autres dans la BDD
+    async.eachSeries(usersListSorted, tribeModel.addUserInTribe, function(err){
+      if(!err) res.send("SPLIT DONE !");
+    });
+  });
 }
 
 exports.validateImmunity = function(req, res) {
