@@ -16,17 +16,27 @@ exports.settings = function(req, res, options, callback) {
   exports.gameSettings(req, res, options, function(gameSettings) {
     exports.userSettings(req, res, options, function(userSettings) {
       exports.citySettings(req, res, options, function(citySettings) {
-        var settings = {  path:               req.path,
-                          title:              "KohLambda - ",
-                          councilStartHour:   19,
-                          councilEndHour:     24,  //End always greater than start
-                          challengeStartHour: 1,
-                          challengeEndHour:   19,  //End always greater than start
-                          inscriptionDays:    2
-                        };
+
+        var settings = {
+          path:               req.path,
+          title:              "KohLambda - ",
+          councilStartHour:   19,
+          councilEndHour:     24,  //End always greater than start
+          challengeStartHour: 1,
+          challengeEndHour:   19,  //End always greater than start
+          inscriptionDays:    2
+        };
+
         settings.game = gameSettings;
-        settings.city = citySettings;
         settings.user = userSettings;
+        settings.city = citySettings;
+
+        if(settings.game.day < 0)
+          settings.gameStage = 'STOPPED';
+        else if(settings.game.day >= 0 && settings.game.day < settings.inscriptionDays)
+          settings.gameStage = 'CASTING';
+        else if(settings.game.day >= settings.inscriptionDays)
+          settings.gameStage = 'STARTED';
 
         callback(settings);
       });
