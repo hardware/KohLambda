@@ -56,6 +56,7 @@ app.post('/login', account.login);
 app.get('/studio/casting', casting.index);
 app.get('/studio/casting/approved', casting.approved);
 app.get('/studio/casting/rejected', casting.rejected);
+app.get('/studio/casting/eliminated', casting.eliminated);
 app.post('/studio/casting/apply', casting.apply);
 
 /*

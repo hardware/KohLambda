@@ -5,9 +5,9 @@ exports.findUserByKey = function(userKey, callback) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM public.users WHERE key = $1 LIMIT 1', [userKey], function(err, result) {
       done();
-      if(result.rowCount == 1) {
+      if(result.rowCount == 1)
         callback(result.rows[0]);
-      } else
+      else
         callback(null);
     });
   });
@@ -17,7 +17,7 @@ exports.findUserByKey = function(userKey, callback) {
 exports.findUsersByType = function(userType, callback) {
 
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT id, name FROM public.users WHERE type = $1', [userType], function(err, result) {
+    client.query('SELECT id, name FROM public.users WHERE type = $1 AND eliminated is not true', [userType], function(err, result) {
       done();
       callback(result);
     });

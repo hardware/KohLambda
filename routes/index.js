@@ -51,7 +51,7 @@ exports.error = function(req, res) {
  *  Method : GET
  */
 exports.loginredirect = function(req, res) {
-  data.settings(req, res, {"shouldBeLogged":false}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:false}, function(settings) {
     settings.title += "Connexion temporaire";
     res.render('login', settings);
   });

@@ -1,9 +1,11 @@
-var pg = require('pg')
-  , http = require('http')
-  , xml2js = require('xml2js')
-  , gameModel = require('../models/game')
-  , userModel = require('../models/user')
-  , cityModel = require('../models/city');
+var pg         = require('pg')
+  , http       = require('http')
+  , xml2js     = require('xml2js')
+  , async      = require('async')
+  , validation = require('./validation')
+  , gameModel  = require('../models/game')
+  , userModel  = require('../models/user')
+  , cityModel  = require('../models/city');
 
 // Fonction pour récupérer les informations sur le jeu et sur l'utilisateur (et sa ville).
 exports.settings = function(req, res, options, callback) {
@@ -106,77 +108,85 @@ exports.userSettings = function(req, res, options, callback) {
 
 }
 
+/*
+
+  LAISSE LES CONSOLE.LOG() AU NIVEAU DU PROCESSUS D'UPDATE
+  LE TEMPS QUE TOUT SOIT TESTÉ CORRECTEMENT :)
+
+*/
+
 exports.update = function(req, res) {
-  //Expires all sessions
+
+  // Expiration des sessions
   if(req.session.game) req.session.game.sessioncached = 0;
   if(req.session.user) req.session.user.sessioncached = 0;
   if(req.session.city) req.session.city.sessioncached = 0;
 
-  if(req.session.user && req.session.user.key) {
-    exports.getXML(req, res, req.session.user.key, function(hordes) {
-      if(hordes.error) {
-        // Switch sur les possibles erreurs de hordes concernant la ville.
-        switch(hordes.error.$.code) {
-          case 'user_not_found':
-            // Suppression de la session utilisateur
-            req.session.user = null;
-            res.redirect('/error/usernotfound');
-            break;
-          case 'horde_attacking':
-            res.redirect('/error/attack');
-            break;
-          case 'not_in_game':
-            res.redirect('/error/notingame');
-            break;
-          case 'maintain':
-            res.redirect('/error/maintain');
-            break;
-          default:
-            res.redirect('/error/'+result.hordes.error.$.code);
-        }
+  async.waterfall([
+
+    // ETAPE 1 : Récupération du flux XML
+    function(callback) {
+      console.log("ETAPE 1 : Récupération du flux XML");
+      exports.getXML(req, res, req.session.user.key, function(hordes) {
+        console.log("-> le flux a bien été récupéré");
+        callback(null, hordes);
+      });
+    },
+
+    // ETAPE 2 : Vérification du statut de hordes.fr
+    function(hordes, callback) {
+      console.log("ETAPE 2 : Vérification du statut de hordes.fr");
+      validation.checkHordesStatus(req, res, hordes, function() {
+        callback(null, hordes);
+      });
+    },
+
+    // ETAPE 3 : Vérification du statut du joueur
+    function(hordes, callback) {
+      console.log("ETAPE 3 : Vérification du statut du joueur");
+      if(req.session.user.eliminated == true) {
+        console.log("-> Joueur déjà éliminé, on arrête le processus de mise à jour");
+        // Joueur déjà éliminé, on arrête le processus de mise à jour
+        callback(true);
       } else {
-
-        var userData = {
-          id: req.session.user.id,
-          key: req.session.user.key,
-          //  name:     hordes.owner.citizen.$.name,   // -> Avec l'accès sécurisé
-          updated:  (new Date())
-        };
-
-        var cityData = {
-          id:     hordes.headers.game.$.id,
-          name:   hordes.data.city.$.city,
-          day:    hordes.headers.game.$.days
-        };
-
-        var findUserCityData = {
-          userId: req.session.user.id,
-          season: req.session.game.season
-        }
-
-        userModel.updateUser(userData, function() {
-          cityModel.findUserCity(findUserCityData, function(citySettings) {
-            if(citySettings) {
-              cityModel.updateCity(cityData, function() {
-                res.redirect('/');
-              });
-            } else {
-              cityData.id_user = req.session.user.id;
-              cityData.season = req.session.game.season;
-
-              cityModel.addCity(cityData, function() {
-                res.redirect('/');
-              });
-            }
-          });
+        validation.checkUserStatus(req, res, hordes, function(status) {
+          console.log(status);
+          callback(null, status);
         });
       }
-    });
-  } else {
-    res.redirect('/login');
-  }
+    },
 
+    // ETAPE 4 : Mise à jour du joueur dans la bdd
+    function(status, callback) {
+      console.log("ETAPE 4 : Mise à jour du joueur dans la bdd");
+      userModel.updateUser(status.user, function() {
+        console.log("-> Joueur mis à jour");
+        callback(null, status);
+      });
+    },
 
+    // ETAPE 5 : Mise à jour du statut du joueur dans sa tribu
+    function(status, callback) {
+      console.log("ETAPE 5 : Mise à jour du statut du joueur dans sa tribu");
+      validation.updateUserTribe(req, res, status, function() {
+        callback(null, status);
+      })
+    },
+
+    // ETAPE 6 : Mise à jour de la ville
+    function(status, callback) {
+      console.log("ETAPE 6 : Mise à jour de la ville");
+      validation.updateUserCity(req, res, status, function() {
+        callback(null);
+      })
+    }
+
+  ], function (err, result) {
+
+    console.log("PROCESSUS DE MAJ TERMINÉ");
+    res.redirect('/');
+
+  });
 }
 
 exports.getXML = function(req, res, userKey, callback) {

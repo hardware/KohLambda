@@ -11,7 +11,7 @@ var pg = require('pg')
  */
 exports.index = function(req, res) {
 
-  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:true}, function(settings) {
     checkCityRegistration(req, res, function() {
       settings.title += "Casting";
       res.render('casting', settings);
@@ -28,7 +28,7 @@ exports.index = function(req, res) {
  */
 exports.apply = function(req, res) {
 
-  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:true}, function(settings) {
     checkCityRegistration(req, res, function() {
       // /!\ [ A MODIFIER ] Pendant la beta : Jour > 0 / Hors beta : Jour == 1
       var leader = req.session.city.day > 0 && !req.session.city.registered;
@@ -72,7 +72,7 @@ exports.apply = function(req, res) {
  */
 exports.approved = function(req, res) {
 
-  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:true}, function(settings) {
     if(req.session.user.type != 'leader') {
       res.redirect('/studio/casting');
       return;
@@ -96,7 +96,7 @@ exports.approved = function(req, res) {
  */
 exports.rejected = function(req, res) {
 
-  data.settings(req, res, {"shouldBeLogged":true}, function(settings) {
+  data.settings(req, res, {shouldBeLogged:true}, function(settings) {
     if(req.session.user.type != 'helper') {
       res.redirect('/studio/casting');
       return;
@@ -111,11 +111,22 @@ exports.rejected = function(req, res) {
 
 }
 
+exports.eliminated = function(req, res) {
+
+  data.settings(req, res, {shouldBeLogged:true}, function(settings) {
+    settings.title += "Vous êtes éliminé !";
+    res.render('eliminated', settings);
+  });
+
+}
+
 var checkSession = function(req, res, callback) {
 
   if(req.session.user.type != null) {
     if(req.session.user.type == 'leader') res.redirect('/studio/casting/approved');
     else res.redirect('/studio/casting/rejected');
+  } else if(req.session.user.eliminated == true) {
+    res.redirect('/studio/casting/eliminated');
   } else {
     callback();
   }
