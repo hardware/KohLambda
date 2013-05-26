@@ -51,7 +51,7 @@ exports.checkUserStatus = function(req, res, hordes, callback) {
       name: hordes.data.city.$.city,
       day:  hordes.headers.game.$.days
     },
-    tribe:null
+    tribe:{}
   };
 
   if(req.session.user.type == 'leader') {

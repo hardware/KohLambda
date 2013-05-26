@@ -83,6 +83,9 @@ footer {
 #container a {
   color: #3e4f41;
 }
+#container a.register {
+  color: black;
+}
 h3 {
   font-family: rtext, sans-serif;
   font-size: 20px;

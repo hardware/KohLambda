@@ -122,11 +122,11 @@ exports.eliminated = function(req, res) {
 
 var checkSession = function(req, res, callback) {
 
-  if(req.session.user.type != null) {
+  if(req.session.user.eliminated == true) {
+    res.redirect('/studio/casting/eliminated');
+  } else if(req.session.user.type != null) {
     if(req.session.user.type == 'leader') res.redirect('/studio/casting/approved');
     else res.redirect('/studio/casting/rejected');
-  } else if(req.session.user.eliminated == true) {
-    res.redirect('/studio/casting/eliminated');
   } else {
     callback();
   }
