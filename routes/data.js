@@ -108,13 +108,6 @@ exports.userSettings = function(req, res, options, callback) {
 
 }
 
-/*
-
-  LAISSE LES CONSOLE.LOG() AU NIVEAU DU PROCESSUS D'UPDATE
-  LE TEMPS QUE TOUT SOIT TESTÉ CORRECTEMENT :)
-
-*/
-
 exports.update = function(req, res) {
 
   // Expiration des sessions
@@ -126,16 +119,14 @@ exports.update = function(req, res) {
 
     // ETAPE 1 : Récupération du flux XML
     function(callback) {
-      console.log("ETAPE 1 : Récupération du flux XML");
+
       exports.getXML(req, res, req.session.user.key, function(hordes) {
-        console.log("-> le flux a bien été récupéré");
         callback(null, hordes);
       });
     },
 
     // ETAPE 2 : Vérification du statut de hordes.fr
     function(hordes, callback) {
-      console.log("ETAPE 2 : Vérification du statut de hordes.fr");
       validation.checkHordesStatus(req, res, hordes, function() {
         callback(null, hordes);
       });
@@ -143,14 +134,11 @@ exports.update = function(req, res) {
 
     // ETAPE 3 : Vérification du statut du joueur
     function(hordes, callback) {
-      console.log("ETAPE 3 : Vérification du statut du joueur");
       if(req.session.user.eliminated == true) {
-        console.log("-> Joueur déjà éliminé, on arrête le processus de mise à jour");
         // Joueur déjà éliminé, on arrête le processus de mise à jour
         callback(true);
       } else {
         validation.checkUserStatus(req, res, hordes, function(status) {
-          console.log(status);
           callback(null, status);
         });
       }
@@ -158,16 +146,13 @@ exports.update = function(req, res) {
 
     // ETAPE 4 : Mise à jour du joueur dans la bdd
     function(status, callback) {
-      console.log("ETAPE 4 : Mise à jour du joueur dans la bdd");
       userModel.updateUser(status.user, function() {
-        console.log("-> Joueur mis à jour");
         callback(null, status);
       });
     },
 
     // ETAPE 5 : Mise à jour du statut du joueur dans sa tribu
     function(status, callback) {
-      console.log("ETAPE 5 : Mise à jour du statut du joueur dans sa tribu");
       validation.updateUserTribe(req, res, status, function() {
         callback(null, status);
       })
@@ -175,7 +160,6 @@ exports.update = function(req, res) {
 
     // ETAPE 6 : Mise à jour de la ville
     function(status, callback) {
-      console.log("ETAPE 6 : Mise à jour de la ville");
       validation.updateUserCity(req, res, status, function() {
         callback(null);
       })
@@ -183,7 +167,6 @@ exports.update = function(req, res) {
 
   ], function (err, result) {
 
-    console.log("PROCESSUS DE MAJ TERMINÉ");
     res.redirect('/');
 
   });
