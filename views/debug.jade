@@ -1,3 +1,17 @@
+div#admintools
+  | Outils d'administration
+  ul
+    form(action='/cron/to-council', method='POST')
+      input(type='hidden', name='secureKey', value="KWotrnskDXDp9MDXNjqTTMHieQDgQjX6yO6TLGAu")
+      li
+        input(type='Submit', value="Passer au conseil")
+    form(action='/cron/to-challenges', method='POST')
+      input(type='hidden', name='secureKey', value="KWotrnskDXDp9MDXNjqTTMHieQDgQjX6yO6TLGAu")
+      li
+        input(type='Submit', value="Passer aux épreuves")
+
+footer
+
 div#debug
   table
     tr

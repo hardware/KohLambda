@@ -38,30 +38,6 @@ html
       block content
 
     if user.admin
-      div#admintools
-        | Outils d'administration
-        ul
-          form(action='/cron/to-council/admin', method='GET')
-            li
-              input(type='Submit', value="Passer au conseil")
-          form(action='/cron/to-challenges/admin', method='GET')
-            li
-              input(type='Submit', value="Passer aux épreuves")
-          form(action='/cron/split-tribes', method='POST')
-            li
-              input(type='Submit', value="Créer les équipes")
-          form(action='/cron/validate-immunity', method='POST')
-            li
-              input(type='Submit', value="Valider l'épreuve d'immunité")
-          form(action='/cron/validate-reward', method='POST')
-            li
-              input(type='Submit', value="Valider l'épreuve de confort")
-          form(action='/cron/validate-council', method='POST')
-            li
-              input(type='Submit', value="Valider les votes du conseil")
-          form(action='/cron/validate-hordes', method='POST')
-            li
-              input(type='Submit', value="Vérifier les statuts sur Hordes")
-    footer
-    if user.admin
       include debug
+    else
+      footer

@@ -73,8 +73,8 @@ app.get('/tribe/:tribe/:user', tribe.userDetails);
 
 app.get('/challenge/immunity', challenge.immunity);
 app.get('/challenge/reward', challenge.reward);
-app.post('/challenge/immunity/validate', challenge.immunityValidation);
-app.post('/challenge/reward/validate', challenge.rewardValidation);
+//app.post('/challenge/immunity/validate', challenge.immunityValidation);
+//app.post('/challenge/reward/validate', challenge.rewardValidation);
 
 app.get('/council', council.index);
 app.post('/council/vote', council.vote);
@@ -82,13 +82,8 @@ app.post('/council/vote', council.vote);
 /*
  *  ROUTES : Cron
  */
-app.post('/cron/split-tribes', cron.splitTribes);
 app.post('/cron/to-council', cron.switchToCouncil);
 app.post('/cron/to-challenges', cron.switchToChallenges);
-app.post('/cron/validate-immunity', cron.validateImmunity);
-app.post('/cron/validate-reward', cron.validateReward);
-app.post('/cron/validate-council', cron.validateCouncil);
-app.post('/cron/validate-hordes', cron.validateHordes);
 
 // 404 Page
 app.use(function(req, res, next){

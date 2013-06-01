@@ -5,3 +5,7 @@
 exports.vote = function(req, res) {
   //TODO: Valider le vote
 }
+
+exports.validateCouncil = function(req, res, callback) {
+  //TODO: Valider les votes du conseil
+}

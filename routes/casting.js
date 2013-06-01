@@ -1,5 +1,4 @@
-var pg = require('pg')
-  , data = require('./data')
+var data = require('./data')
   , cityModel = require('../models/city')
   , userModel = require('../models/user');
 

@@ -1,5 +1,4 @@
-var pg         = require('pg')
-  , http       = require('http')
+var http       = require('http')
   , xml2js     = require('xml2js')
   , async      = require('async')
   , validation = require('./validation')

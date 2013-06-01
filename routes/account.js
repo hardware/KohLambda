@@ -1,5 +1,4 @@
-var pg = require('pg')
-  , async = require('async')
+var async = require('async')
   , data = require('./data')
   , userModel = require('../models/user');
 
@@ -81,6 +80,8 @@ var register = function(req, res, callback) {
       name = 'Scrib'; break;
     case '42a8da7cb1ab7dfc88274c71e00c3b7d':
       name = 'Chacalex'; break;
+    case 'b0e01e94f40510aa0750cdd7794241f2':
+      name = 'Kradox'; break;
     default:
       name = '[anonyme]';
   }
