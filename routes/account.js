@@ -11,13 +11,13 @@ var async = require('async')
  */
 exports.login = function(req, res) {
 
-  if(!req.body.key) {
+  if(!req.body.key || req.body.k) {
     res.redirect('/login');
     return;
   }
 
   // Ajout de la clé à la session de l'utilisateur
-  req.session.user = {key: req.body.key};
+  req.session.user = {key: req.body.key || req.body.k};
 
   userModel.findUserByKey(req.session.user.key, function(result) {
     async.series([
