@@ -43,7 +43,7 @@ exports.login = function(req, res) {
  */
 var register = function(req, res, callback) {
 
-  var name = '';
+/*  var name = '';
 
   switch(req.session.user.key) {
     case '5e03e132efe39d02b4004307f8d32d22':
@@ -91,8 +91,9 @@ var register = function(req, res, callback) {
     res.send('Vous n\'êtes pas invité à cette beta, contactez Liezon ou Hardware sur Twinoid');
     return;
   }
-
   var data = {name: name, key: req.session.user.key};
+*/
+  var data = {key: req.session.user.key};
 
   userModel.addUser(data, function(result) {
     // Création de la session du nouvel utilisateur
