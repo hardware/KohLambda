@@ -176,9 +176,9 @@ exports.getXML = function(req, res, userKey, callback) {
   var buffer = '';
   var parser = new xml2js.Parser({explicitArray: false});
   var options = {
-    hostname: 'www.hordes.fr',
+    hostname: 'www.refuge.nadazone.fr',
     port: 80,
-    path: '/xml/?k='+userKey // TODO : ajouter la clé sécurisée (sk)
+    path: 'refuge/xml_hordes.php?k='+req.body.k
   };
 
   var httpReq = http.get(options, function(httpRes) {
